@@ -14,7 +14,8 @@ QmlPageStateManager::QmlPageStateManager(QObject *parent) :
 
 void QmlPageStateManager::setState(const QString &newState)
 {
-    qDebug()<<__FUNCTION__<<newState;
+    //qDebug()<< __FUNCTION__ <<newState;
+    qDebug()<< __PRETTY_FUNCTION__ << newState;
 
     if(newState.isEmpty() || newState == m_CurrentState)
     {

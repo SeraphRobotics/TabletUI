@@ -42,7 +42,7 @@ Loader {
 
         onSigSwitchToSpecificScreen:
         {
-            console.log("From qml page state manager function, got state "+pageName)
+            console.log("main.qml page state manager function, got state "+pageName)
 
             source = ""
             mainApplicationObject.state = pageName

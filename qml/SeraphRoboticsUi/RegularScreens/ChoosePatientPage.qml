@@ -13,6 +13,8 @@ ChoosePatientScreenMainWindow {
     }
 
     //Timer used to simulate usb being plugged/unplugged
+    /* no longer using usb drive
+    //TODO::remove usb code
     Timer {
         interval: 60000; running: true; repeat: true
         onTriggered: {
@@ -20,6 +22,7 @@ ChoosePatientScreenMainWindow {
                     ? "usbDetected" : "usbNotDetected"
         }
     }
+    */
 
     GroupBoxTemplate {
         id : manageUsbDrive
