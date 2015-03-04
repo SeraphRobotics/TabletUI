@@ -27,6 +27,7 @@ Loader {
 
     // Page 20-30 from pdf. Item used for showing pads.
     // We don't want to reload page again and again, that's why we keep it created.
+
     SettingsPageScreen {
         id : settingsPage
         objectName: "settingsPage"

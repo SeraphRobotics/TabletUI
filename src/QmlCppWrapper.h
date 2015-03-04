@@ -3,7 +3,8 @@
 
 #include <QObject>
 
-#include <runtime/mastercontrolunit.h>
+//#include <runtime/mastercontrolunit.h>
+#include "mastercontrolunit.h"
 
 #include "Models/UsersListModel.h"
 #include "Models/PatientsListModel.h"

@@ -43,16 +43,15 @@ Rectangle {
 
     Text {
         id : title
-
+        anchors.fill: parent
         color : "#666666"
         font.pixelSize: 19
-        text : "START"
+        text : "*****"
         renderType: Text.NativeRendering
-
-        anchors {
-            verticalCenter: parent.verticalCenter
-            horizontalCenter: parent.horizontalCenter
-        }
+        fontSizeMode: Text.Fit
+        //clip: true
+        verticalAlignment: Text.AlignVCenter
+        horizontalAlignment: Text.AlignHCenter
     }
 
     MouseArea {

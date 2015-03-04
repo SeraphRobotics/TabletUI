@@ -4,7 +4,7 @@ import "../" 1.0
 
 // Bottom panel from page 12.
 Row {
-    property Item rootVisibleElement: null
+    //property Item rootVisibleElement: null
 
     spacing : 100
 
@@ -43,6 +43,7 @@ Row {
     anchors.bottomMargin: 2
         onCustomClicked : {
             FramePopup.showPopup()
+            console.log("camera bottom button")
         }
     }
 
@@ -51,6 +52,7 @@ Row {
     anchors.bottom: parent.bottom
         onCustomClicked : {
             FramePopup.showPopup()
+            console.log("patient bottom button")
         }
     }
 }

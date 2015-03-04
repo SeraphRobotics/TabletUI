@@ -9,144 +9,85 @@ import "StartScreenPrivateComponents"
 */
 PageTemplate {
     id : startScreen
-
-    state : "buttonShowing"
+    anchors.fill: parent
 
     StyledButton {
-        id : startButton
-
-        z : pinInput.z + 1
+        id : uploadToSDRxButton
         height : 80
+        anchors.horizontalCenterOffset: -344
 
-        focus : visible
         text.color: "#ffffff"
-        text.font.pixelSize: 42
+        text.font.pixelSize: 30
+        titleText: "Upload Rx to SD"
 
         border.color: "#2e3192"
 
         buttonType : "startButton"
         anchors {
             top : parent.top
-            topMargin: 200
+            topMargin: 496
             horizontalCenter: parent.horizontalCenter
         }
         onCustomClicked:
         {
-            startScreen.state = "pinInputShowing"
+            console.log("upload to sd button pushed")
         }
     }
 
-    Rectangle {
-        id : pinInput
+    StyledButton {
+        id : startNewRxButton
+        height : 80
+        anchors.horizontalCenterOffset: 0
 
-        width : startButton.width
-        height : startButton.height
+        text.color: "#ffffff"
+        text.font.pixelSize: 30
+        titleText: "Start New Rx"
 
-        anchors.centerIn: startButton
+        border.color: "#2e3192"
 
-        radius : 10
-        visible : true
-        focus : visible
-
-        gradient : Gradient
-        {
-            GradientStop { position: 0.0; color: "#b6b6b6" }
-            GradientStop { position: 1.0; color: "#f0f0f1"}
-        }
-
-        StyledTextInput {
-            id : textPinInput
-
-            anchors.centerIn: parent
-
-            deafultFontSize :30
-            anchors.fill: parent
-
-            textColor: "#666666"
-
-            focus : true
-            visible : true
-
-            welcomeTextColor:   "#e6e6e6"
-            placeholderText: "enter pin"
-
-            style : textPinInput.styleNormalInput
-
-            Keys.onReturnPressed:
-            {
-
-                // Get the currently selected item .
-                var currentItem = usersListModel.getSpecificItem(listUsers.listView.currentIndex)
-
-                // Checks if the item exist.
-                if( currentItem === null)
-                {
-                    return
-                }
-
-                // Corrected Password detection.
-                if(textPinInput.text === currentItem.password)
-                {
-                    usersListModel.currentIndex = listUsers.listView.currentIndex
-                    startScreen.state = "buttonShowing"
-                    stateManager.setState("choosePatientState")
-                }
-                // Wrong password.
-                else
-                {
-                    console.log("Password is inncorect")
-                    textPinInput.style = textPinInput.styleErrorInput
-                }
-
-            }
-
-            onTextChanged:
-            {
-                if (textPinInput.style == textPinInput.styleErrorInput)
-                {
-                    textPinInput.style = textPinInput.styleNormalInput
-                }
-            }
-        }
-    }
-
-    StartScreenUsersList {
-        id : listUsers
-
+        buttonType : "startButton"
         anchors {
-            top : startButton.bottom
-            topMargin: 50
+            top : parent.top
+            topMargin: 496
             horizontalCenter: parent.horizontalCenter
         }
-
-        onCurrentIndexChanged:
+        onCustomClicked:
         {
-            startScreen.state = "buttonShowing"
-            textPinInput.text = ""
-            textPinInput.style = textPinInput.styleNormalInput
+            console.log("Start new rx button pushed")
+            //startScreen.state = "pinInputShowing"
+        }
+    }
+
+    StyledButton {
+        id : deleteAllFilesButton
+        height : 80
+        anchors.horizontalCenterOffset: 350
+
+        text.color: "#ffffff"
+        text.font.pixelSize: 30
+        titleText: "Delete all files"
+
+        border.color: "#2e3192"
+
+        buttonType : "startButton"
+        anchors {
+            top : parent.top
+            topMargin: 496
+            horizontalCenter: parent.horizontalCenter
+        }
+        onCustomClicked:
+        {
+            console.log("delete all files button pushed")
         }
     }
 
     StartScreenBottomPanel {
-        rootVisibleElement : startScreen
+        //rootVisibleElement : startScreen
         anchors {
             bottom : parent.bottom
             bottomMargin : 15
             horizontalCenter: parent.horizontalCenter
         }
     }
-
-    states: [
-        State {
-            name: "buttonShowing"
-            PropertyChanges { target: startButton; visible: true }
-            PropertyChanges { target: pinInput; opacity: 0 }
-        },
-        State {
-            name: "pinInputShowing"
-            PropertyChanges { target: pinInput; opacity: 1 }
-            PropertyChanges { target: startButton; visible: false }
-        }
-    ]
 
 }

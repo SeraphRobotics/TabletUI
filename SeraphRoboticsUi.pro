@@ -6,7 +6,7 @@ DEPLOYMENTFOLDERS = folder_01
 # Additional import path used to resolve QML modules in Creator's code model
 QML_IMPORT_PATH =
 
-QT += xml 3dquick core
+QT += xml 3dquick core qml
 
 QMAKE_CXXFLAGS += -std=c++11
 
@@ -35,7 +35,8 @@ SOURCES += main.cpp \
     src/SettingsPageManager.cpp \
     src/XmlManager/XmlFileManager.cpp \
     src/3dHelper/q3dhelper.cpp \
-    src/ImageProcessingClass/ImageContoursDetector.cpp
+    src/ImageProcessingClass/ImageContoursDetector.cpp \
+    src/mastercontrolunit.cpp
 
 
 # Please do not modify the following two lines. Required for deployment.
@@ -55,7 +56,8 @@ HEADERS += \
     src/SettingsPageManager.h \
     src/XmlManager/XmlFileManager.h \
     src/3dHelper/q3dhelper.h \
-    src/ImageProcessingClass/ImageContoursDetector.h
+    src/ImageProcessingClass/ImageContoursDetector.h \
+    src/mastercontrolunit.h
 
 RESOURCES += \
     resourcesFile.qrc

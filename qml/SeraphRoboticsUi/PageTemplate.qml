@@ -6,12 +6,13 @@ import "./RegularScreens/SettingsPagePrivateComponents/" 1.0
 Rectangle {
     id : templateWindow
 
+    width : 1280
+    height : 800
     property alias logo : logo
     property bool active: true
 
     signal logoButtonClicked()
-    
-    anchors.fill: parent
+    //anchors.fill: parent
 
     gradient: Gradient
     {

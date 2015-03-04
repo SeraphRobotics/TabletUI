@@ -1,5 +1,9 @@
 #include <QtGui/QGuiApplication>
 #include <QQmlContext>
+#include <QtQuick/QQuickView>
+#include <QtQml/QQmlEngine>
+
+
 
 #include "qtquick2applicationviewer.h"
 #include "src/QmlPageStateManager.h"
@@ -25,10 +29,6 @@ int main(int argc, char *argv[])
 
     viewer.rootContext()->setContextProperty("stateManager",
                                              &stateManager);
-    viewer.rootContext()->setContextProperty("patientsListModel",
-                                             QVariant::fromValue(cppWrapper.getPatientsList()));
-    viewer.rootContext()->setContextProperty("usersListModel",
-                                             QVariant::fromValue(cppWrapper.getUsersList()));
     viewer.rootContext()->setContextProperty("qmlCppWrapper",
                                              &cppWrapper);
     viewer.rootContext()->setContextProperty("applicationSettings",
@@ -38,11 +38,11 @@ int main(int argc, char *argv[])
     viewer.rootContext()->setContextProperty("settingsPageManager",
                                              &settingsPageManager);
 
-
     // For View3d
     qmlRegisterType<Q3DHelper>("Helpers", 1, 0, "Q3DHelper");
 
     viewer.setMainQmlFile(QStringLiteral("qml/SeraphRoboticsUi/main.qml"));
+    //viewer.setMainQmlFile(QStringLiteral("qml/SeraphRoboticsUi/RegularScreens/StartPage.qml"));
     viewer.showExpanded();
 
     ApplicationSettingsManager::getInstance().setStartingState();

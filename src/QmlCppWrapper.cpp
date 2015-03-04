@@ -12,12 +12,10 @@ QmlCppWrapper::QmlCppWrapper(QObject *parent) :
     QObject(parent),
     c_ImagesFolderPath(qApp->applicationDirPath().append("/customPad"))
 {
-    m_UsersList = new UsersListModel(this);
-    m_PatientsList = new PatientsListModel(this);
     m_XmlManager = new XmlFileManager(this);
     m_ImageContoursDetector = new ImageContoursDetector(this);
 
-
+    /*
     qRegisterMetaType<NameObject*>("NameObject*");
     qRegisterMetaType<UserObject*>("UserObject*");
     qRegisterMetaType<PatientObject*>("PatientObject*");
@@ -31,7 +29,7 @@ QmlCppWrapper::QmlCppWrapper(QObject *parent) :
                      this, &QmlCppWrapper::_setUsersList);
     QObject::connect(m_UsersList, SIGNAL(sigSaveUserList(QList<QObject*> *)),
                      &m_MasterControlUnit, SLOT(updateUserList(QList<QObject*>*)));
-
+    */
     _createImagesDirectoryIfNotExist();
 }
 
