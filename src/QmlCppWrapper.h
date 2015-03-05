@@ -2,18 +2,14 @@
 #define QMLCPPWRAPPER_H
 
 #include <QObject>
-
-//#include <runtime/mastercontrolunit.h>
 #include "mastercontrolunit.h"
-
-#include "Models/UsersListModel.h"
-#include "Models/PatientsListModel.h"
 
 class ImageContoursDetector;
 class XmlFileManager;
 
 /// @brief Class used to wrap c++ interface into QtQuick.
-class QmlCppWrapper : public QObject
+//class QmlCppWrapper : public QObject
+class QmlCppWrapper : public MasterControlUnit
 {
     Q_OBJECT
 
@@ -24,14 +20,7 @@ public:
     explicit QmlCppWrapper(QObject *parent = 0);
     ~QmlCppWrapper();
 
-public:
-    /** Import Users list from xml to QtQuick
-     */
-    UsersListModel* getUsersList();
-
-    /** Import Patients list from xml to QtQuick
-     */
-    PatientsListModel* getPatientsList();
+    Q_INVOKABLE void beginScan();
 
     /** @note take a look at m_iFrameUrl description.*/
     QString iFrameUrl() const;
@@ -68,21 +57,11 @@ public:
      * see description of c_ImagesFolderPath to learn more about this */
     Q_INVOKABLE void _createImagesDirectoryIfNotExist() const;
 
-
 signals:
     void sigiFrameUrlChanged() const;
-
 private:
-    void _setUsersList();
-    void _setPatientsList();
-
-private:
-    MasterControlUnit m_MasterControlUnit;
+    //MasterControlUnit m_MasterControlUnit;
     XmlFileManager *m_XmlManager;
-
-    UsersListModel* m_UsersList;
-    PatientsListModel* m_PatientsList;
-
     ImageContoursDetector *m_ImageContoursDetector; /// @note - Class for borders detection.
 
     QString m_iFrameUrl; /// @note current popup showing url Activated via Tutorial button.
