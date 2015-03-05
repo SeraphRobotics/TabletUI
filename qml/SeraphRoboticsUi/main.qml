@@ -28,6 +28,7 @@ Loader {
     // Page 20-30 from pdf. Item used for showing pads.
     // We don't want to reload page again and again, that's why we keep it created.
 
+    /*
     SettingsPageScreen {
         id : settingsPage
         objectName: "settingsPage"
@@ -35,6 +36,7 @@ Loader {
         opacity : mainApplicationObject.state == "settingsPageScreen" ? 1 : 0
         enabled : mainApplicationObject.state == "settingsPageScreen" ? true : false
     }
+    */
 
     // Page manager (state machine), gets state from stateManager cpp
     // and switches to proper screen.
@@ -43,11 +45,22 @@ Loader {
 
         onSigSwitchToSpecificScreen:
         {
-            console.log("main.qml page state manager function, got state "+pageName)
+            console.log("main.qml stateManager, got state " + pageName)
 
             source = ""
-            mainApplicationObject.state = pageName
+            //mainApplicationObject.state = pageName
 
+            if(pageName == "startScreenState")
+                source = "RegularScreens/StartPage.qml"
+            else if(pageName == "scanImpresionPage")
+                source = "RegularScreens/ScanImpresionPage.qml"
+
+            else if(pageName == "main3dView")
+                source = "RegularScreens/SettingsPagePrivateComponents/ReviewSubpage/Main3dView.qml"
+            else
+                console.log("main.qml stateMange unknown pageName " + pageName)
+
+           /*
             if(pageName == "summaryPage")
                 source = "InitialSetupWizard/SummaryPage.qml"
             else if(pageName == "saveSettings")
@@ -72,6 +85,7 @@ Loader {
                 source = "RegularScreens/PatientHistoryPage.qml"
             else if(pageName == "main3dView")
                 source = "RegularScreens/SettingsPagePrivateComponents/ReviewSubpage/Main3dView.qml"
+            */
         }
     }
 

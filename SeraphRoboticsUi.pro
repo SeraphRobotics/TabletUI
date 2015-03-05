@@ -90,3 +90,8 @@ unix:LIBS += -lopencv_highgui
 
 win32:INCLUDEPATH += $$PWD/../../../../opencv/build/include
 win32:DEPENDPATH += $$PWD/../../../../opencv/build/include
+
+DISTFILES += \
+    qml/SeraphRoboticsUi/RegularScreens/ScanImpresionPage.qml \
+    qml/SeraphRoboticsUi/RegularScreens/ScanImpresionPagePrivateComponents/ScanImpresionPageComponents/ScanImpresionChooseSideComponent.qml \
+    qml/SeraphRoboticsUi/RegularScreens/ScanImpresionPagePrivateComponents/ScanImpresionPageComponents/ScanImpresionChooseSideElement.qml

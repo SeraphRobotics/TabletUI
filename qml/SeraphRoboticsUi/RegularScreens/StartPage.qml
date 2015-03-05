@@ -1,18 +1,19 @@
 import QtQuick 2.4
+import QtQuick.Dialogs 1.2
 
 import ".."
 import "../Components"
 import "StartScreenPrivateComponents"
 
-/*
-    Main Ui screen page 12 from complete2June14.pdf
-*/
 PageTemplate {
     id : startScreen
     anchors.fill: parent
 
+    WipDialog { id: wipDialog }
+
     StyledButton {
         id : uploadToSDRxButton
+        objectName: "uploadToSDRxButton"
         height : 80
         anchors.horizontalCenterOffset: -344
 
@@ -30,12 +31,15 @@ PageTemplate {
         }
         onCustomClicked:
         {
+            wipDialog.show(objectName)
             console.log("upload to sd button pushed")
         }
     }
 
     StyledButton {
         id : startNewRxButton
+        objectName: "startNewRxButton"
+
         height : 80
         anchors.horizontalCenterOffset: 0
 
@@ -54,12 +58,13 @@ PageTemplate {
         onCustomClicked:
         {
             console.log("Start new rx button pushed")
-            //startScreen.state = "pinInputShowing"
+            stateManager.setState("scanImpresionPage")
         }
     }
 
     StyledButton {
         id : deleteAllFilesButton
+        objectName: "deleteAllFilesButton"
         height : 80
         anchors.horizontalCenterOffset: 350
 
@@ -78,6 +83,7 @@ PageTemplate {
         onCustomClicked:
         {
             console.log("delete all files button pushed")
+            wipDialog.show(objectName)
         }
     }
 
