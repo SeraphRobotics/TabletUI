@@ -1,4 +1,5 @@
 import QtQuick 2.4
+import QtQuick.Dialogs 1.2
 
 import "../../Components"
 import "../../Components/Edges"
@@ -22,6 +23,27 @@ Item {
     }
     MouseArea {  anchors.fill: parent }
     property  int progressValue: 0
+
+    function scanProgress(step) {
+        //console.log("scan progress " + step)
+        progressBar.value = step
+    }
+    function scanError(error) {
+        console.log("scan error " + error )
+        infoMessage.title = "Scanner error"
+        infoMessage.text = error
+        infoMessage.open()
+        progressBar.value = 0
+    }
+
+    Connections { target: qmlCppWrapper; onScanProgress: scanProgress(step)}
+    Connections { target: qmlCppWrapper; onScanError: scanError(error)}
+    Connections { target: qmlCppWrapper; onScanCompleted:scanStatus.color = "green" }
+
+
+    MessageDialog {
+        id: infoMessage
+    }
 
     Timer {
         id: timer
@@ -89,6 +111,7 @@ Item {
                 }
             } // Row
             Row {
+                id: row1
                 spacing: 50
                 StyledButton {
                     id : beginScanButton
@@ -105,8 +128,9 @@ Item {
                     //horizontalCenter: parent.horizontalCenter
                     //}
                     onCustomClicked: {
-                        //wipDialog.show(objectName)
-                        timer.start() }
+                        qmlCppWrapper.beginScan()
+                        scanStatus.color = "red"
+                    }
                 }
                 ProgressBar {
                     id: progressBar
@@ -115,7 +139,7 @@ Item {
                     indeterminate: false
                     //value: progressValue
                     minimumValue: 0
-                    maximumValue: 20
+                    maximumValue: 334
                     style: ProgressBarStyle {
                         background: Rectangle {
                             //clip: true
@@ -133,6 +157,15 @@ Item {
                         }
                     }
                 }
+                Rectangle {
+                    id: scanStatus
+                    height: 30
+                    width: 30
+                    color: "red"
+                    radius: 20
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+
 
             } // Row
         } // Columnn

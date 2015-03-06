@@ -20,6 +20,10 @@ MasterControlUnit::MasterControlUnit(QObject *parent) :
     scanController = new ScannerController();
     scanController->connect(scanWatcher,SIGNAL(scannerPort(QString)),scanController,SLOT(portSelected(QString)));
     scanController->connect(scanWatcher,SIGNAL(disconnected()), scanController,SLOT(disconnected()));
+    connect(scanController, SIGNAL(scanError(QString)), this, SIGNAL(scanError(QString)));
+    connect(scanController, SIGNAL(scanProgress(int)), this, SIGNAL(scanProgress(int)));
+    connect(scanController, SIGNAL(scanComplete()), this, SIGNAL(scanCompleted()));
+
 
     QTime time = QTime::currentTime();
     qsrand((uint)time.msec());
@@ -30,6 +34,13 @@ MasterControlUnit::~MasterControlUnit()
     delete scanWatcher;
     delete scanController;
 }
+
+// public
+void MasterControlUnit::beginScan()
+{
+    scanController->startScan();
+}
+
 
 void  MasterControlUnit::test3d(Foot_Type foot){
     STLFile f;

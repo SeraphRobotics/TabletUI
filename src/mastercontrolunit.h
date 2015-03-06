@@ -16,9 +16,13 @@ public:
     ~MasterControlUnit();
 
     QList< UI_Shell_Modification> getShellModificationsList();
-signals:
-    void shellModifications(QList< UI_Shell_Modification> mods);
+    Q_INVOKABLE void beginScan();
 
+signals:
+    void scanProgress(int step);
+    void scanError(QString error);
+    void scanCompleted();
+    void shellModifications(QList< UI_Shell_Modification> mods);
     void USBPlugedIn();//choose patient
     void USBItemsChanged(QList < UI_USB_Item > items);
     void USBUnPluged();//choose patient
@@ -40,7 +44,6 @@ public slots:
     void loadCustomerNumber(QString); //setup
 
 private slots:
-
     void test3d(Foot_Type foot);
     void testScanLoads(int num);
 

@@ -20,8 +20,6 @@ public:
     explicit QmlCppWrapper(QObject *parent = 0);
     ~QmlCppWrapper();
 
-    Q_INVOKABLE void beginScan();
-
     /** @note take a look at m_iFrameUrl description.*/
     QString iFrameUrl() const;
     void setiFrameUrl(const QString& iFrameUrl);

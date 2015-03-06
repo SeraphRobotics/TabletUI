@@ -1,9 +1,10 @@
 import QtQuick 2.4
 
 import "RegularScreens"
-import "RegularScreens/ChoosePatientScreenPrivateComponents" 1.0
+//import "RegularScreens/ChoosePatientScreenPrivateComponents" 1.0
 import "./Components" 1.0
-import "./RegularScreens/SettingsPagePrivateComponents/" 1.0
+//import "./RegularScreens/SettingsPagePrivateComponents/" 1.0
+import "./RegularScreens/ScanImpresionPagePrivateComponents/" 1.0
 
 /*
  Main QtQuick Item which is our root item, here we switch beetwen all screens in applications.
@@ -97,5 +98,6 @@ Loader {
         FramePopup.parent = mainApplicationObject
         TutorialWindowPopup.parent = mainApplicationObject
         GrayPopup.parent = mainApplicationObject
+        //RegualarScreenPopup.parent = mainApplicationObject
     }
 }

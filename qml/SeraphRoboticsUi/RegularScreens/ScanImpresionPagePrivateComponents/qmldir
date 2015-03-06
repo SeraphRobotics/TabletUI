@@ -1,1 +1,2 @@
 singleton SettingsPageComponentsSettings 1.0 SettingsPageComponentsSettings.qml
+singleton GrayPopup 1.0 RegularScreenPopup.qml

@@ -1,16 +1,25 @@
-#include "ApplicationSettingsManager.h"
-
-#include "QSettings"
+// qt
+#include <QSettings>
 #include <QtGui/QGuiApplication>
 #include <QDebug>
 #include <QDir>
 #include <QFile>
+
+// seraphlibs
+#include <runtime/applicationsettings.h>
+
+// local
+#include "ApplicationSettingsManager.h"
+
 
 
 ApplicationSettingsManager::ApplicationSettingsManager(QObject *parent) :
     QObject(parent)
 
 {
+    ApplicationSettings appSettings;
+    appSettings.setDefaultSettings();
+
 #ifdef Q_OS_WIN
     m_ApplicationIniFilePath = static_cast<QString>
             (getenv("APPDATA"))+"/Seraph/SeraphData.ini";
@@ -19,6 +28,8 @@ ApplicationSettingsManager::ApplicationSettingsManager(QObject *parent) :
 #ifdef Q_OS_LINUX
     m_ApplicationIniFilePath = qApp->applicationDirPath()+"/settings.ini";
 #endif
+
+
 
     if(QFile::exists(m_ApplicationIniFilePath))
     {
@@ -45,7 +56,7 @@ void ApplicationSettingsManager::_createSettingsFile()
     settings.setValue("scan-extension", "scan");
     settings.setValue("ortho-extension", "ortho");
     settings.setValue("ortho-directory",qApp->applicationDirPath());
-
+    settings.setValue("camNumber",0);
     settings.setValue("patient-file",
                       qApp->applicationDirPath().append("/patients.xml"));
     settings.setValue("users-file",

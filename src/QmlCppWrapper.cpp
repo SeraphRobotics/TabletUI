@@ -45,12 +45,6 @@ QmlCppWrapper::~QmlCppWrapper()
 
 
 // public
-void QmlCppWrapper::beginScan()
-{
-
-}
-
-
 QString QmlCppWrapper::iFrameUrl() const
 {
     return m_iFrameUrl;
