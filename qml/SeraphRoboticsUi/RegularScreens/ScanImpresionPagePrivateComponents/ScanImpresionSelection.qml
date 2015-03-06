@@ -226,18 +226,20 @@ Item {
             }
             else if(state === "left")
             {
-                edgeEditor.imageSource = "qrc:/exampleImages/left-scan-cut.png"
-                if(edgeEditor.state != "start")
-                    edgeEditor.state = "left"
+                wipDialog.show("left boot scan")
+                //edgeEditor.imageSource = "qrc:/exampleImages/left-scan-cut.png"
+                //if(edgeEditor.state != "start")
+                //    edgeEditor.state = "left"
             }
             else if(state === "right")
             {
-                edgeEditor.imageSource =  "qrc:/exampleImages/right-scan-cut.png"
-                if(edgeEditor.state != "start")
-                    edgeEditor.state = "right"
+                wipDialog.show("right foot scan")
+                //edgeEditor.imageSource =  "qrc:/exampleImages/right-scan-cut.png"
+                //if(edgeEditor.state != "start")
+                //    edgeEditor.state = "right"
             }
             // Redraw canvas.
-            edgeEditor.canvas.requestPaint()
+            //edgeEditor.canvas.requestPaint()
         }
     }
 
