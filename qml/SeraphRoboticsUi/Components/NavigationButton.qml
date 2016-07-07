@@ -1,14 +1,12 @@
 import QtQuick 2.4
 
-Rectangle {
+Item {
     id : button
 
     width: buttonInformationText.width+arrowImage.sourceSize.width+30
     height: buttonInformationText.height+20
 
     signal buttonClicked()
-
-    color : "transparent"
 
     property string buttonAlignmentType : "right"
 
@@ -18,14 +16,14 @@ Rectangle {
     function leftOrRightButton( type) {
         buttonAlignmentType = type
 
-        if( buttonAlignmentType === "center") {
+        if (buttonAlignmentType === "center") {
             arrowImage.source = "qrc:/QmlResources/tutorial.png"
             arrowImage.anchors.right = button.right
             arrowImage.anchors.rightMargin = 10
             buttonInformationText.anchors.right = arrowImage.left
             buttonInformationText.anchors.rightMargin = 10
         }
-        if( buttonAlignmentType === "right") {
+        if (buttonAlignmentType === "right") {
             anchors.right = parent.right
             anchors.rightMargin = 70
             anchors.top = parent.top
@@ -36,7 +34,7 @@ Rectangle {
             buttonInformationText.anchors.right = arrowImage.left
             buttonInformationText.anchors.rightMargin = 10
         }
-        if(buttonAlignmentType === "left" ) {
+        if (buttonAlignmentType === "left" ) {
             anchors.left =parent.left
             anchors.leftMargin= 70
             anchors.top = parent.top
@@ -71,7 +69,7 @@ Rectangle {
             verticalCenter: parent.verticalCenter
         }
 
-        text : "continue"
+        text : qsTr("continue")
     }
 
     MouseArea {

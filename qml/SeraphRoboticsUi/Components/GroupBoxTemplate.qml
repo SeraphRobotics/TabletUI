@@ -63,7 +63,7 @@ Rectangle {
         Text {
             id : title
 
-            text : "Choose user"
+            text : qsTr("Choose user")
 
             color : "white"
             font {

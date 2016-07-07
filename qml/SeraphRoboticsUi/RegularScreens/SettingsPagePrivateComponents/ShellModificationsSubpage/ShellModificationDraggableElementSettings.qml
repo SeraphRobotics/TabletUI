@@ -5,9 +5,7 @@ import QtQuick.Controls.Styles 1.2
 import "../../../Components"
 import "../" 1.0
 
-Rectangle {
-    color : "transparent"
-
+Item {
     signal hide()
     signal sigCustomizePad()
 
@@ -36,8 +34,8 @@ Rectangle {
             leftMargin: 50
         }
 
-        text : "<p align=\"center\">U Shaped Pad<br/>
-                Creator</p>"
+        text : qsTr("<p align=\"center\">U Shaped Pad<br/>
+                Creator</p>")
         font.pixelSize: 25
     }
 
@@ -88,8 +86,6 @@ Rectangle {
             onCustomClicked: {
                 SettingsPageComponentsSettings.saveValues(stiffnessSlider.value,
                                                           mmValues.text,
-                                                          sliderContainer.leftTriangle.x,
-                                                          sliderContainer.rightTriangle.x,
                                                           sliderContainer.depthValue)
                 hide()
             }
@@ -102,7 +98,7 @@ Rectangle {
         height : 50
         width : 150
 
-        titleText : "<p align=\"center\">Remove<br/>pad</p>"
+        titleText : qsTr("<p align=\"center\">Remove<br/>pad</p>")
 
         text {
             textFormat: Text.RichText
@@ -126,7 +122,7 @@ Rectangle {
         height : 50
         width : 150
 
-        titleText : "<p align=\"center\">Customize<br/>pad shape</p>"
+        titleText : qsTr("<p align=\"center\">Customize<br/>pad shape</p>")
 
         text {
             textFormat: Text.RichText
@@ -158,7 +154,7 @@ Rectangle {
         GrayDescriptionText {
             id : descriptionText
 
-            text : "Height/Depth"
+            text : qsTr("Height/Depth")
             font.pixelSize: 22
 
             anchors {
@@ -184,7 +180,7 @@ Rectangle {
                 target: sliderContainer.leftTriangle
                 property: "x"
                 value: SettingsPageComponentsSettings.currentDraggablePad !== null ?
-                           SettingsPageComponentsSettings.currentDraggablePad.m_HeightDepthXL :
+                           sliderContainer.getHeightDepthXL(SettingsPageComponentsSettings.currentDraggablePad.m_Depth) :
                            sliderContainer.m_BasicLeftTriangleX
             }
 
@@ -192,7 +188,8 @@ Rectangle {
                 target: sliderContainer.rightTriangle
                 property: "x"
                 value: SettingsPageComponentsSettings.currentDraggablePad !== null ?
-                           SettingsPageComponentsSettings.currentDraggablePad.m_HeightDepthXR :
+                           sliderContainer.getHeightDepthXR(SettingsPageComponentsSettings.currentDraggablePad.m_Depth,
+                                                               SettingsPageComponentsSettings.currentDraggablePad.m_Height) :
                            sliderContainer.m_BasicRightTriangleX
             }
         }
@@ -223,7 +220,7 @@ Rectangle {
 
             Text {
                 id : deltaPrefix
-                text : "△"
+                text : qsTr("△")
 
                 font.pixelSize: 15
 
@@ -246,7 +243,7 @@ Rectangle {
             leftMargin: 10
         }
 
-        text : "Stiffness"
+        text : qsTr("Stiffness")
         font.pixelSize: 22
     }
 

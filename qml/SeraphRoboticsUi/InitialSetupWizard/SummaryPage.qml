@@ -11,7 +11,7 @@ PageTemplate {
     NavigationButton {
         id : leftNavigationButton
 
-        buttonText : "back & undo changes"
+        buttonText : qsTr("back & undo changes")
 
         onButtonClicked:  {
             stateManager.setState(stateManager.previousState)
@@ -24,7 +24,7 @@ PageTemplate {
     NavigationButton {
         id : rightNavigationButton
 
-        buttonText : "save & exit"
+        buttonText : qsTr("save & exit")
         onButtonClicked:  {
             applicationSettings.
             saveAccountSettingsToIniFile(accountSettingsElement.pinRequireValue,
@@ -99,7 +99,7 @@ PageTemplate {
         id : editAccounts
 
         width : 220
-        titleText : "edit/delete accounts"
+        titleText : qsTr("edit/delete accounts")
 
         anchors {
             right: prescriberAccounts.right
@@ -140,13 +140,13 @@ PageTemplate {
             opacity : 0.3
 
             width : 150
-            titleText : "switch user"
+            titleText : qsTr("switch user")
         }
         StyledButton {
             id : logout
 
             width : 150
-            titleText : "logout"
+            titleText : qsTr("logout")
 
             onCustomClicked: {
                 stateManager.setState("startScreenState")
@@ -241,7 +241,7 @@ PageTemplate {
                 font {
                     pixelSize: 20
                 }
-                text : "contact for support"
+                text : qsTr("contact for support")
                 mouseArea.cursorShape: Qt.PointingHandCursor
 
                 onLinkClicked:  {
@@ -254,7 +254,7 @@ PageTemplate {
                 font {
                     pixelSize: 20
                 }
-                text : "order materials"
+                text : qsTr("order materials")
                 mouseArea.cursorShape: Qt.PointingHandCursor
                 onLinkClicked:  {
                     qmlCppWrapper.iFrameUrl = applicationSettings.orderMaterialsUrl()
@@ -279,14 +279,14 @@ PageTemplate {
                 font {
                     pixelSize: 20
                 }
-                text : "backup patients"
+                text : qsTr("backup patients")
                 mouseArea.cursorShape: Qt.PointingHandCursor
             }
             GrayDescriptionText {
                 font {
                     pixelSize: 20
                 }
-                text : "usage tracker"
+                text : qsTr("usage tracker")
                 mouseArea.cursorShape: Qt.PointingHandCursor
             }
         }
@@ -302,9 +302,9 @@ PageTemplate {
             font {
                 pixelSize: 15
             }
-            text : "customer support<br/>
+            text : qsTr("customer support<br/>
                     info@seraphrobotics.com<br/>
-                    555-555-555<br/>"
+                    555-555-555<br/>")
         }
     }
 }

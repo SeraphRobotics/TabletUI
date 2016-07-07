@@ -61,7 +61,7 @@ Row {
 
 
                 Text {
-                    text : "on"
+                    text : qsTr("on")
 
                     opacity: (toogleButton.checked) ? 1 : 0
 
@@ -81,7 +81,7 @@ Row {
                 }
 
                 Text {
-                    text : "off"
+                    text : qsTr("off")
 
                     opacity: (toogleButton.checked) ? 0 : 1
 

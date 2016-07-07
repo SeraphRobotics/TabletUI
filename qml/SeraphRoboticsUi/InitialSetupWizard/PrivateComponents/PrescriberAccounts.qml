@@ -11,7 +11,7 @@ GroupBoxTemplate {
     height: heightScaleValue*parent.height
     width: widthScaleValue*parent.width
 
-    title: "Prescriber Accounts"
+    title: qsTr("Prescriber Accounts")
 
 
     GrayDescriptionText {
@@ -24,7 +24,7 @@ GroupBoxTemplate {
             topMargin: 20
         }
 
-        text :usersListModel.currentIndex == -1 ? "" : "<b>Prescriber name</b><br/>"+
+        text :usersListModel.currentIndex == -1 ? "" : qsTr("<b>Prescriber name</b><br/>")+
                                              usersListModel.getSpecificItem(usersListModel.currentIndex).name.title+" "+
                                              usersListModel.getSpecificItem(usersListModel.currentIndex).name.firstName+" "+
                                              usersListModel.getSpecificItem(usersListModel.currentIndex).name.lastName
@@ -43,7 +43,7 @@ GroupBoxTemplate {
             topMargin: 20
         }
 
-        text :usersListModel.currentIndex == -1 ? "" : "<b>Pin Num</b><br/>"+
+        text :usersListModel.currentIndex == -1 ? "" : qsTr("<b>Pin Num</b><br/>")+
                                              usersListModel.getSpecificItem(usersListModel.currentIndex).password
         color : "#999999"
         font {

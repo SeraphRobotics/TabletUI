@@ -15,7 +15,7 @@ Row {
         id : deleteAccount
 
         width : 180
-        titleText : "Delete Account"
+        titleText : qsTr("Delete Account")
 
         onCustomClicked: {
             deleteClicked()
@@ -26,7 +26,7 @@ Row {
         id : editAccount
 
         width : 210
-        titleText : "Edit Account"
+        titleText : qsTr("Edit Account")
 
         onCustomClicked: {
             editClicked()
@@ -37,7 +37,7 @@ Row {
         id : addAccount
 
         width : 210
-        titleText : "Add New Account"
+        titleText : qsTr("Add New Account")
 
         onCustomClicked: {
             addClicked()

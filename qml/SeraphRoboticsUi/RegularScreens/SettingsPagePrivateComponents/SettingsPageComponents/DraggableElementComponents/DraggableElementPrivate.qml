@@ -84,7 +84,7 @@ QtObject {
     {
         var boundingRect = currentElement
 
-        var catchElement = checkedDropArea.view3d.mapFromItem(boundingRect.parent,
+        var catchElement = checkedDropArea.view3dRect.mapFromItem(boundingRect.parent,
                                                        boundingRect.x,
                                                        boundingRect.y)
         var xPosition = catchElement.x
@@ -97,12 +97,12 @@ QtObject {
         var SideYMin =
                 Math.max(-heightSensitiveArea, -100)
 
-        console.log("Element width "+boundingRect.width+" view 3d width "+checkedDropArea.view3d.width)
+        console.log("Element width "+boundingRect.width+" view 3d width "+checkedDropArea.view3dRect.width)
 
-        var SideXMax = checkedDropArea.view3d.width
+        var SideXMax = checkedDropArea.view3dRect.width
                 -boundingRect.width*currentElement.elementScale.xScale+widthSensitiveArea
 
-        var SideYMax = checkedDropArea.view3d.height
+        var SideYMax = checkedDropArea.view3dRect.height
                 -boundingRect.height*currentElement.elementScale.yScale+heightSensitiveArea
 
         console.log("Current X"+xPosition+"Current Y "+yPosition+" min X "+SideXMin+" max X"+

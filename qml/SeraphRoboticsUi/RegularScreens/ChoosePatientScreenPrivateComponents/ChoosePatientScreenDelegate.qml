@@ -5,10 +5,9 @@ import QtQuick.Controls.Styles 1.2
 import "../../Components"
 import ".."
 
-Rectangle {
+Item {
     width: parent.width-100
     height: textContent.height+4
-    color : "transparent"
 
     property Item listView
 
@@ -31,7 +30,6 @@ Rectangle {
         }
 
         width : parent.width-60
-
         height : statusText.height
 
         GrayDescriptionText {

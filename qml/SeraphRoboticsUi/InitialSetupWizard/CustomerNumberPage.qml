@@ -54,7 +54,7 @@ PageTemplate {
             horizontalCenter: customNumberInput.horizontalCenter
         }
 
-        text: "You must now input your customer number for verification:"
+        text: qsTr("You must now input your customer number for verification:")
     }
 
     StyledTextInput {
@@ -85,7 +85,7 @@ PageTemplate {
         color : "#f15a24"
         font.pixelSize: 15
 
-        text : "incorrect customer number"
+        text : qsTr("incorrect customer number")
 
         visible: validateLength() && !(validateText())
     }
@@ -102,7 +102,7 @@ PageTemplate {
         color : "#f15a24"
         font.pixelSize: 15
 
-        text : "incoret length"
+        text : qsTr("incorrect length")
 
         opacity: 0
 
@@ -144,7 +144,7 @@ PageTemplate {
             topMargin : 30
             horizontalCenter: customNumberInput.horizontalCenter
         }
-        text: "Customer Number (from confirmation email)."
+        text: qsTr("Customer Number (from confirmation email).")
     }
 
 }

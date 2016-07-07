@@ -1,170 +1,93 @@
 // View3dPosting.qml
 
 import QtQuick 2.0
-import QtQuick.Layouts 1.1
-import Qt3D 2.0
-import Qt3D.Shapes 2.0
+import QtCanvas3D 1.0
 
-import Helpers 1.0
+import "scene_lateral.js" as SceneLateral
+import "scene_posterior.js" as ScenePosterior
 
-Rectangle {
-    id: view3dPosting
-    color: "transparent"
+// 3dView Item - Viewer for stl files in posting section (see page 28).
+Column {
+    anchors.left: parent.left; anchors.top: parent.top
+    spacing: 10
 
-    property alias meshColor: meshColorEffect.color
-    property alias meshSource: commonMesh.source
-    property color commonFillColor: "transparent"
-    property alias uView: upperView
-    property alias bView: bottomView
-    property bool commonNavigation: true
+    property string meshSource
 
-    Mesh {
-        id: commonMesh
-        dumpInfo: true
-        options: "ForceSmooth"
-        onLoaded: {
-            uItem.effect = meshColorEffect
-            bItem.effect = meshColorEffect
+    //Lateral view
+    Rectangle {
+        color: "transparent"
+        border.color: "#000000"
+        width: parent.width
+        height: (parent.height - 3 * spacing - lateralText.height - posteriorText.height) / 2
+        radius: 10
 
-            q3dhelper.setNode(commonMesh)
+        Canvas3D {
+            id: sceneLateral
+            // need to be able set transparent background
+            opacity: 0.99
+
+            anchors.fill: parent
+            anchors.margins: 10
+
+            onInitializeGL: SceneLateral.initializeGL(sceneLateral,
+                                                      meshSource,
+                                                      qmlCppWrapper.currentFoot.scanWidth(),
+                                                      qmlCppWrapper.currentFoot.scanHeight())
+            onPaintGL: SceneLateral.paintGL(sceneLateral)
+            onResizeGL: SceneLateral.resizeGL(sceneLateral)
         }
     }
 
-    Effect { id: meshColorEffect }
+    Text {
+        id: lateralText
+        width: parent.width
+        horizontalAlignment: Text.AlignHCenter
 
-    Q3DHelper { id: q3dhelper }
+        text: qsTr("lateral")
+    }
 
-    ColumnLayout {
-        id: column
-        anchors {
-            fill: parent
-            margins: 15
+    //Posterior view
+    Rectangle {
+        color: "transparent"
+        border.color: "#000000"
+        width: parent.width
+        height: (parent.height - 3 * spacing - lateralText.height - posteriorText.height) / 2
+        radius: 10
+
+        Canvas3D {
+            id: scenePosterior
+            // need to be able set transparent background
+            opacity: 0.99
+
+            anchors.fill: parent
+            anchors.margins: 10
+
+            onInitializeGL: ScenePosterior.initializeGL(scenePosterior,
+                                                        meshSource,
+                                                        qmlCppWrapper.currentFoot.scanWidth(),
+                                                        qmlCppWrapper.currentFoot.scanHeight())
+            onPaintGL: ScenePosterior.paintGL(scenePosterior)
+            onResizeGL: ScenePosterior.resizeGL(scenePosterior)
         }
+    }
 
-        Rectangle {
-            id: upperRect
-            clip: true
+    Text {
+        id: posteriorText
+        width: parent.width
+        horizontalAlignment: Text.AlignHCenter
 
-            Layout.fillHeight: true
-            Layout.fillWidth: true
+        text: qsTr("anterior/posterior")
+    }
 
-            border {
-                color: "black"
-                width: 1
-            }
-            radius: 10
-
-            color: "transparent"
-
-            Viewport {
-                id: upperView
-                anchors.fill: upperRect
-                anchors.margins: 20
-                navigation: commonNavigation
-                fillColor: commonFillColor
-
-                property alias cameraNP: uViewCam.nearPlane
-                property int distance: 10
-                property int k: 65 // scale factor
-                property alias cam: uViewCam
-
-                camera: Camera {
-                    id: uViewCam
-                    projectionType: Camera.Orthographic
-                    eye: Qt.vector3d(0, 0, bottomView.distance)
-                }
-
-                Item3D {
-                    id: uItem
-                    mesh: commonMesh
-                    position: Qt.vector3d(1.5, -0.7, 0)
-                    scale: 1 / upperView.k
-                    transform : [
-                        Rotation3D {
-                            angle: -90
-                            axis: Qt.vector3d(1, 0, 0)
-                        },
-                        Rotation3D {
-                            angle: 90
-                            axis: Qt.vector3d(0, 1, 0)
-                        }
-                    ]
-                }
-
-                StickyDegreeLabel {
-                    id: upperViewDegree
-                    degree: 0
-                }
-            }
-        }
-
-        Text {
-            Layout.fillWidth: true
-            text: "lateral"
-            horizontalAlignment: Text.AlignHCenter
-        }
-
-        Rectangle {
-            id: bottomRect
-            clip: true
-
-            Layout.fillHeight: true
-            Layout.fillWidth: true
-
-            border {
-                color: "black"
-                width: 1
-            }
-            radius: 10
-            color: "transparent"
-
-            Viewport {
-                id: bottomView
-                anchors.fill: bottomRect
-                anchors.margins: 20
-                navigation: commonNavigation
-                fillColor: commonFillColor
-
-                property alias cameraNP: bViewCam.nearPlane
-                property int distance: 10
-                property int k: 65 // scale factor
-                property alias cam: bViewCam
-
-                camera: Camera {
-                    id: bViewCam
-                    projectionType: Camera.Orthographic
-                    eye: Qt.vector3d(0, 0, bottomView.distance)
-                }
-
-                Item3D {
-                    id: bItem
-                    mesh: commonMesh
-                    position: Qt.vector3d(0.8, -0.2, 0)
-                    scale: 1 / bottomView.k
-
-                    transform : [
-                        Rotation3D {
-                            angle: -90
-                            axis: Qt.vector3d(1, 0, 0)
-                        },
-                        Rotation3D {
-                            angle: 180
-                            axis: Qt.vector3d(0, 1, 0)
-                        }
-                    ]
-                }
-
-                StickyDegreeLabel {
-                    id: bottomViewDegree
-                    degree: 0
-                }
-            }
-        }
-
-        Text {
-            Layout.fillWidth: true
-            text: "anterior/posterior"
-            horizontalAlignment: Text.AlignHCenter
-        }
+    onMeshSourceChanged: {
+        SceneLateral.setNewStlFile(sceneLateral,
+                                   meshSource,
+                                   qmlCppWrapper.currentFoot.scanWidth(),
+                                   qmlCppWrapper.currentFoot.scanHeight())
+        ScenePosterior.setNewStlFile(scenePosterior,
+                                     meshSource,
+                                     qmlCppWrapper.currentFoot.scanWidth(),
+                                     qmlCppWrapper.currentFoot.scanHeight())
     }
 }
+

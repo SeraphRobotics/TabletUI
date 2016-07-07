@@ -14,7 +14,7 @@ GroupBoxTemplate {
     width: listContainer.width / 2
     height: listContainer.height * 1.5
 
-    title: "Edit Account"
+    title: qsTr("Edit Account")
 
     function resetInputs() {
         title.curIndx = 0
@@ -29,7 +29,7 @@ GroupBoxTemplate {
     StyledButton {
         id: cancelButton
 
-        titleText: "Cancel"
+        titleText: qsTr("Cancel")
         anchors.bottom: parent.bottom
         anchors.right: parent.right
         anchors.bottomMargin: parent.height / 10
@@ -45,7 +45,7 @@ GroupBoxTemplate {
     }
 
     StyledButton {
-        titleText: "Accept"
+        titleText: qsTr("Accept")
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.bottomMargin: parent.height / 10
@@ -75,7 +75,7 @@ GroupBoxTemplate {
             id: title
 
             width: fName.width; height: parent.height / 7;
-            text: "Title"
+            text: qsTr("Title")
             anchors.horizontalCenter: parent.horizontalCenter
 
             onVisibleChanged: {
@@ -84,7 +84,7 @@ GroupBoxTemplate {
             }
 
             Component.onCompleted: {
-                createModel(["Dr.", "Mr.", "Mrs.", "Miss.", "Ms."])
+                createModel([qsTr("Dr."), qsTr("Mr."), qsTr("Mrs."), qsTr("Miss."), qsTr("Ms.")])
                 comboBox.selectSpecificItemViaContent(usersListModel.list[accountList.checkInd].name.title)
             }
 
@@ -94,7 +94,7 @@ GroupBoxTemplate {
             id: fName
 
             width: parent.width; height: parent.height / 7;
-            text: "First Name"
+            text: qsTr("First Name")
             anchors.horizontalCenter: parent.horizontalCenter
 
             textFiled.text: usersListModel.list[accountList.checkInd].name.firstName
@@ -104,7 +104,7 @@ GroupBoxTemplate {
             id: lName
 
             width: parent.width; height: parent.height / 7;
-            text: "Last Name"
+            text: qsTr("Last Name")
             anchors.horizontalCenter: parent.horizontalCenter
 
             textFiled.text: usersListModel.list[accountList.checkInd].name.lastName
@@ -115,7 +115,7 @@ GroupBoxTemplate {
             id: pas
 
             width: parent.width; height: parent.height / 7;
-            text: "PIN"
+            text: qsTr("PIN")
             anchors.horizontalCenter: parent.horizontalCenter
 
             textFiled.text: usersListModel.list[accountList.checkInd].password
@@ -125,7 +125,7 @@ GroupBoxTemplate {
             id: cert
 
             width: parent.width; height: parent.height / 7;
-            text: "Degree/\nCertification"
+            text: qsTr("Degree/\nCertification")
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
@@ -133,7 +133,7 @@ GroupBoxTemplate {
             id: photo
 
             width: parent.width; height: parent.height / 7;
-            text: "Photo"
+            text: qsTr("Photo")
             anchors.horizontalCenter: parent.horizontalCenter
             textFiled.visible: false
 
@@ -172,7 +172,7 @@ GroupBoxTemplate {
 
                 width : 150
                 height : 40
-                titleText : "upload photo"
+                titleText : qsTr("upload photo")
 
                 anchors {
                     right : parent.right

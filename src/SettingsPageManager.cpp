@@ -1,72 +1,100 @@
 #include "SettingsPageManager.h"
 
-#include <QDebug>
+/*!
+ * \class SettingsPageManager
+ * \brief Class to store the states of SettingsPage children items
+ */
 
 SettingsPageManager::SettingsPageManager(QObject *parent) :
     QObject(parent),
-    m_CurrentSelectedDirection("right")
-   ,m_ShellModificationsState("up")
+    m_CurrentSelectedDirection("left"),
+    m_ShellModificationsState("up")
 {
 }
 
+/*!
+ * \brief Return main settings page state
+ * \return
+ */
 QString SettingsPageManager::mainSettingsPageState() const
 {
-    qDebug()<<__FUNCTION__<<" "<<m_MainSettingsPageState;
     return m_MainSettingsPageState;
 }
 
+/*!
+ * \brief Return current selected direction
+ * \return
+ */
 QString SettingsPageManager::currentSelectedDirection() const
 {
-    qDebug()<<__FUNCTION__<<" "<<m_CurrentSelectedDirection;
     return m_CurrentSelectedDirection;
 }
 
+/*!
+ * \brief Return shell modification state
+ * \return
+ */
 QString SettingsPageManager::shellModificationsState() const
 {
-    qDebug()<<__FUNCTION__<<" "<<m_ShellModificationsState;
     return m_ShellModificationsState;
 }
 
+/*!
+ * \brief Return modification state
+ * \return
+ */
 QString SettingsPageManager::modificationState() const
 {
-    qDebug()<<__FUNCTION__<<" "<<m_ModificationPageState;
     return m_ModificationPageState;
 }
 
+/*!
+ * \brief Set main settings page state
+ * \param mainSettingsPageState
+ */
 void SettingsPageManager::setMainSettingsPageState(const QString &mainSettingsPageState)
 {
-    if(m_MainSettingsPageState != mainSettingsPageState)
+    if (m_MainSettingsPageState != mainSettingsPageState)
     {
         m_MainSettingsPageState = mainSettingsPageState;
         emit sigMainSettingsPageStateChanged();
     }
 }
 
+/*!
+ * \brief Set current selected direction
+ * \param currentSelectedDirection
+ */
 void SettingsPageManager::setCurrentSelectedDirection(const QString &currentSelectedDirection)
 {
-    if(m_CurrentSelectedDirection != currentSelectedDirection)
+    if (m_CurrentSelectedDirection != currentSelectedDirection)
     {
-        qDebug()<<__FUNCTION__<<currentSelectedDirection;
         m_CurrentSelectedDirection = currentSelectedDirection;
         emit sigCurrentSelectedDirectionChanged();
     }
 }
 
+/*!
+ * \brief Set shell modification state
+ * \param shellModificationsState
+ */
 void SettingsPageManager::setShellModificationsState(const QString &shellModificationsState)
 {
-    if(m_ShellModificationsState != shellModificationsState)
+    if (m_ShellModificationsState != shellModificationsState)
     {
-        qDebug()<<__FUNCTION__<<shellModificationsState;
         m_ShellModificationsState = shellModificationsState;
         emit sigShellModificationsStateChanged();
     }
 }
 
+/*!
+ * \brief Set modification page state
+ * \param modificationState
+ */
 void SettingsPageManager::setModificationPageState(const QString &modificationState)
 {
-    if(m_ModificationPageState != modificationState)
+    if (m_ModificationPageState != modificationState)
     {
-        qDebug()<<__FUNCTION__<<modificationState;
         m_ModificationPageState = modificationState;
         emit sigModificationStateChanged();
     }

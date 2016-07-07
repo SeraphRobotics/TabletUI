@@ -7,6 +7,8 @@ import "SettingsPageComponents"
 Item {
     id : mainWindow
 
+    property alias edgeEditor: edgeEditor
+
     // This signal is emitted when the user accepted side.
     signal directionSelected()
 
@@ -30,7 +32,7 @@ Item {
     GroupBoxTemplate {
         id : scanImageBox
 
-        title : "Right Scan"
+        title : qsTr("Right Scan")
 
         width : parent.width/2-80
 
@@ -57,9 +59,17 @@ Item {
             ImageBasedButton {
                 source : "qrc:/QmlResources/accept.png"
 
+                Connections {
+                    target: qmlCppWrapper
+
+                    onHideAnimationProgress: {
+                        directionSelected()
+                    }
+                }
+
                 onCustomClicked:
                 {
-                    directionSelected()
+                    qmlCppWrapper.generateStlModels()
                 }
             }
         }
@@ -80,22 +90,22 @@ Item {
             width: parent.width * 0.5
             height: parent.height * 0.8
 
-            edgeRadius: 25
+            edgeRadius: 15
 
             onStateChanged:
             {
                 if(state === "right")
                 {
-                    scanImageBox.title =  "Right Scan"
+                    scanImageBox.title = "Right Scan"
                 }
                 else if(state === "left")
                 {
-                    scanImageBox.title =  "Left Scan"
+                    scanImageBox.title = "Left Scan"
                 }
             }
 
             Component.onCompleted: {
-                state = "right"
+                state = settingsPageManager.currentSelectedDirection
                 initWidth = width
                 initHeight = height
             }
@@ -116,9 +126,9 @@ Item {
                         (parent.width-scanImageBox.width)/2-descriptionText.width/2
         }
 
-        text : "Select the foot by clicking on it.<br/><br/>
-Drag the blue dots to define the<br/>
-metatarsal edge of the shell.<br/>"
+        text : qsTr("Select the foot by clicking on it.<br/><br/>
+Drag the colored dots to define the<br/>
+metatarsal edge of the shell.<br/>")
     }
 
     SettingsPageChooseSideComponent {
@@ -147,34 +157,45 @@ metatarsal edge of the shell.<br/>"
         leftSide.height:height* 0.85
         rightSide.height: height* 0.85
 
-        leftSide.view3d.visible: true
-        rightSide.view3d.visible: true
+        leftSide.view3dRect.visible: false
+        rightSide.view3dRect.visible: false
 
         leftSide.rawImageVisible: true
         rightSide.rawImageVisible: true
 
         middleTextArea.visible: false
 
-        leftSide.rawImageSource: "qrc:/exampleImages/left-scan-cut.png"
-        rightSide.rawImageSource: "qrc:/exampleImages/right-scan-cut.png"
-
         onStateChanged:
         {
             if(state === "left")
             {
-                edgeEditor.imageSource = "qrc:/exampleImages/left-scan-cut.png"
                 if(edgeEditor.state != "start")
                     edgeEditor.state = "left"
             }
             else if(state === "right")
             {
-                edgeEditor.imageSource =  "qrc:/exampleImages/right-scan-cut.png"
                 if(edgeEditor.state != "start")
                     edgeEditor.state = "right"
             }
-            // Redraw canvas.
-            edgeEditor.canvas.requestPaint()
         }
     }
 
+    Connections {
+        target: qmlCppWrapper
+
+        onScanImageGenerated: {
+            edgeEditor.leftImageSource = "image://scan_images/left"
+            edgeEditor.rightImageSource = "image://scan_images/right"
+            edgeEditor.initFeet()
+            if (selectionArea.state === "left")
+                edgeEditor.setLeftEdge()
+            else if (selectionArea.state === "right")
+                edgeEditor.setRightEdge()
+
+            selectionArea.leftSide.rawImageSource = ""
+            selectionArea.rightSide.rawImageSource = ""
+            selectionArea.leftSide.rawImageSource = edgeEditor.leftImageSource
+            selectionArea.rightSide.rawImageSource = edgeEditor.rightImageSource
+        }
+    }
 }

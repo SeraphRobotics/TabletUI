@@ -32,7 +32,6 @@ StyledComboBox {
 
         if(objectName ===  "allUsersList")
         {
-            console.log("Searching for "+currentUser+".")
             selectSpecificItemViaContent(currentUser)
         }
     }

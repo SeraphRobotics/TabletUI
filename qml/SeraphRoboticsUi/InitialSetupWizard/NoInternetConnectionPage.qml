@@ -43,9 +43,9 @@ PageTemplate {
         }
 
         text :
-            "<p align=\"center\">Please conect to the internet by clicking<br/>
+            qsTr("<p align=\"center\">Please conect to the internet by clicking<br/>
                      the wireless icon<br/>
-                     and logging into your network.<br/></p>"
+                     and logging into your network.<br/></p>")
     }
 
     Image {
@@ -74,8 +74,8 @@ PageTemplate {
         }
 
         text :
-            "<p align=\"center\">You must be logged in to the internet to use<br/>
-        the software at all times.</p>"
+            qsTr("<p align=\"center\">You must be logged in to the internet to use<br/>
+        the software at all times.</p>")
     }
 
     SequentialAnimation {

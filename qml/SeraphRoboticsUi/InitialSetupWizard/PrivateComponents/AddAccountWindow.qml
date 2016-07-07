@@ -14,7 +14,7 @@ GroupBoxTemplate {
     width: listContainer.width / 2
     height: listContainer.height * 1.5
 
-    title: "Add Account"
+    title: qsTr("Add Account")
 
     function resetInputs() {
         title.curIndx = 0
@@ -29,7 +29,7 @@ GroupBoxTemplate {
     StyledButton {
         id: addAccountWindowCancelButton
 
-        titleText: "Cancel"
+        titleText: qsTr("Cancel")
         anchors.bottom: parent.bottom
         anchors.right: parent.right
         anchors.bottomMargin: parent.height / 10
@@ -44,7 +44,7 @@ GroupBoxTemplate {
     }
 
     StyledButton {
-        titleText: "Add"
+        titleText: qsTr("Add")
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.bottomMargin: parent.height / 10
@@ -76,13 +76,12 @@ GroupBoxTemplate {
             bottom: addAccountWindowCancelButton.top
         }
         spacing: 2
-        Rectangle {
+
+        Item {
             id: title
 
             property alias curIndx: textInp.currentIndex
             property string inputText: textInp.currentText
-
-            color: "transparent"
 
             width: parent.width; height: parent.height / 7;
             anchors.horizontalCenter: parent.horizontalCenter
@@ -96,7 +95,7 @@ GroupBoxTemplate {
 
                 height: parent.height
 
-                text: "Title"
+                text: qsTr("Title")
                 color : "#666666"
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
@@ -117,7 +116,7 @@ GroupBoxTemplate {
                 anchors.verticalCenter: parent.verticalCenter
                 width: parent.width / 5; height: parent.height / 1.5
 
-                model: [ "Dr.", "Mr.", "Mrs.","Miss.","Ms." ]
+                model: [ qsTr("Dr."), qsTr("Mr."), qsTr("Mrs."),qsTr("Miss."),qsTr("Ms.") ]
 
             }
 
@@ -127,7 +126,7 @@ GroupBoxTemplate {
             id: fName
 
             width: parent.width; height: parent.height / 7;
-            text: "First Name"
+            text: qsTr("First Name")
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
@@ -135,7 +134,7 @@ GroupBoxTemplate {
             id: lName
 
             width: parent.width; height: parent.height / 7;
-            text: "Last Name"
+            text: qsTr("Last Name")
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
@@ -143,7 +142,7 @@ GroupBoxTemplate {
             id: pas
 
             width: parent.width; height: parent.height / 7;
-            text: "PIN"
+            text: qsTr("PIN")
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
@@ -151,7 +150,7 @@ GroupBoxTemplate {
             id: cert
 
             width: parent.width; height: parent.height / 7;
-            text: "Degree/\nCertification"
+            text: qsTr("Degree/\nCertification")
             anchors.horizontalCenter: parent.horizontalCenter
         }
 
@@ -159,7 +158,7 @@ GroupBoxTemplate {
             id: photo
 
             width: parent.width; height: parent.height / 7;
-            text: "Photo"
+            text: qsTr("Photo")
             anchors.horizontalCenter: parent.horizontalCenter
             textFiled.visible: false
 
@@ -196,7 +195,7 @@ GroupBoxTemplate {
 
                 width : 150
                 height : 40
-                titleText : "upload photo"
+                titleText : qsTr("upload photo")
 
                 anchors {
                     right : parent.right

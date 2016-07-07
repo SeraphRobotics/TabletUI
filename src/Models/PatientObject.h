@@ -4,14 +4,10 @@
 #include <QObject>
 #include <QQmlListProperty>
 
-#include "NameObject.h"
-#include "PatientDataObject.h"
-#include <View/UI_structs.h>
+#include "View/UI_structs.h"
 
-/**
- * @brief The PatientObject class
- * Class to store all patient data including Scans and Rx's
- */
+class NameObject;
+
 class PatientObject : public QObject
 {
     Q_OBJECT
@@ -48,6 +44,7 @@ public:
     void setName(NameObject *firstName);
 
     void appendDataObject(const UI_USB_Item &object);
+    void removeDataObject(const QString &objectId, const UI_USB_Item::Type &type);
 
     QQmlListProperty<QObject> scansList();
     QQmlListProperty<QObject> rxList();
@@ -58,6 +55,8 @@ public:
     void setScansListCurrentIndex(const int &currentIndex);
     void setRxListCurrentIndex(const int &currentIndex);
     void sortRxViaDate();
+
+    QString getScanIdByOrthoticId(const QString &orthoId) const;
 
 signals:
     void sigIdChanged() const;
@@ -73,10 +72,12 @@ private:
 private:
     QString m_Id;
     QString m_DoctorId;
-    NameObject* m_NameObject;
+    NameObject *m_NameObject;
 
     QList<QObject*> m_ScansList;
     QList<QObject*> m_RxList;
+    QMap<QString,QObject*> m_ScansMap;
+    QMap<QString,QString> m_RxToScansMap;
     
     int m_ScansListCurrentIndex;
     int m_RxListCurrentIndex;

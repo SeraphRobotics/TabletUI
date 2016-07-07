@@ -1,6 +1,6 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.2
-import QtQuick.Controls.Styles 1.2
+import QtQuick.Controls.Styles 1.4
 
 TextField {
 
@@ -34,6 +34,7 @@ TextField {
 
         TextFieldStyle {
             placeholderTextColor :welcomeTextColor
+            // In case of bug, see https://bugreports.qt.io/browse/QTCREATORBUG-11186
             font.pixelSize : deafultFontSize
 
             background: Rectangle {
@@ -55,6 +56,7 @@ TextField {
 
         TextFieldStyle {
             placeholderTextColor :welcomeTextColor
+            // In case of bug, see https://bugreports.qt.io/browse/QTCREATORBUG-11186
             font.pixelSize : deafultFontSize
             background: Rectangle {
                 id : m_background

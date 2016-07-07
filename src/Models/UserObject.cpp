@@ -1,6 +1,12 @@
 #include "UserObject.h"
+#include "NameObject.h"
 
 #include <QDebug>
+
+/*!
+ * \class UserObject
+ * \brief Class used to store user data
+ */
 
 UserObject::UserObject(NameObject *name,
                        const QString &id,

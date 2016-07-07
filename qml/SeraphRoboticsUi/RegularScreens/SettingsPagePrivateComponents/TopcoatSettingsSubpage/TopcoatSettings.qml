@@ -12,12 +12,13 @@ SettingsPageExtensibleArea {
     id : topcoatSettings
 
     index : 2
-    title : "Topcoat Settings"
+    title : qsTr("Topcoat Settings")
 
     signal switchToModificationsPage()
 
     property alias currentTopcoatWeave: topcoatWeave.checkInd
     property alias currentTopcoatThicknessValue: sliderHeight.value
+    property real currentTopcoatStyle: 1
 
     property alias rec_save : rec_save
 
@@ -52,6 +53,55 @@ SettingsPageExtensibleArea {
         sliderHeight.value = sliderBinding.calculateValue()
     }
 
+    function getTopcoatValues(foot)
+    {
+        if (foot === "left") {
+            return [SettingsPageComponentsSettings.topcoatThicknessLeft,
+                    SettingsPageComponentsSettings.topcoatWeaveLeft,
+                    SettingsPageComponentsSettings.topcoatStyleLeft]
+        }
+
+        if (foot === "right") {
+            return [SettingsPageComponentsSettings.topcoatThicknessRight,
+                    SettingsPageComponentsSettings.topcoatWeaveRight,
+                    SettingsPageComponentsSettings.topcoatStyleRight]
+        }
+    }
+
+    function setTopcoatValues(foot, topcoat)
+    {
+        if (topcoat[2] === 0) {
+            noTopcoat.checked = true
+            mainWindow.state = "noTopcoat"
+        } else if (topcoat[2] === 1) {
+            autoTopcoat.checked = true
+            mainWindow.state = "autoTopcoat"
+            if (foot === "left") {
+                SettingsPageComponentsSettings.topcoatThicknessLeft = topcoat[0]
+                SettingsPageComponentsSettings.topcoatWeaveLeft = topcoat[1]
+                SettingsPageComponentsSettings.topcoatStyleLeft = topcoat[2]
+            } else if (foot === "right") {
+                SettingsPageComponentsSettings.topcoatThicknessRight = topcoat[0]
+                SettingsPageComponentsSettings.topcoatWeaveRight = topcoat[1]
+                SettingsPageComponentsSettings.topcoatStyleRight = topcoat[2]
+            }
+        } else if (topcoat[2] === 2) {
+            clothTopcoat.checked = true
+            mainWindow.state = "clothTopcoat"
+        }
+    }
+
+    function setDefaultValues()
+    {
+        noTopcoat.checked = true
+        mainWindow.state = "noTopcoat"
+        SettingsPageComponentsSettings.topcoatThicknessLeft = 6
+        SettingsPageComponentsSettings.topcoatThicknessRight = 6
+        SettingsPageComponentsSettings.topcoatWeaveLeft = 1
+        SettingsPageComponentsSettings.topcoatWeaveRight = 1
+        SettingsPageComponentsSettings.topcoatStyleLeft = 1
+        SettingsPageComponentsSettings.topcoatStyleRight = 1
+    }
 
     function checkIfValuesTheSameAndCurrentSettingsAlso()
     {
@@ -110,7 +160,7 @@ SettingsPageExtensibleArea {
                 rightMargin: 40
             }
 
-            Rectangle{
+            Item {
                 width: 58
                 height: 58
 
@@ -142,9 +192,17 @@ SettingsPageExtensibleArea {
 
                     onCustomClicked:
                     {
+                        var style = 0
+                        if (autoTopcoat.checked) {
+                            style = 1
+                        } else if (clothTopcoat.checked) {
+                            style = 2
+                        }
+
                         SettingsPageComponentsSettings.setTopcoatThickness(sliderHeight.value,
                                                                            false,
-                                                                           topcoatWeave.checkInd)
+                                                                           topcoatWeave.checkInd,
+                                                                           style)
                         rec_save.isSave = true
 
                     }
@@ -167,7 +225,7 @@ SettingsPageExtensibleArea {
             }
 
             font.pixelSize: 22
-            text : "Topcoat Options"
+            text : qsTr("Topcoat Options")
         }
 
         Column {
@@ -188,7 +246,7 @@ SettingsPageExtensibleArea {
 
                 group: topcoatSettingRadioButton
 
-                descriptionText : "Auto-Topcoat (settings below)"
+                descriptionText : qsTr("Auto-Topcoat (settings below)")
 
                 onAreaClicked: {
                     mainWindow.state = "autoTopcoat"
@@ -200,7 +258,7 @@ SettingsPageExtensibleArea {
                 group: topcoatSettingRadioButton
                 checked: true
 
-                descriptionText : "No Topcoat"
+                descriptionText : qsTr("No Topcoat")
 
                 onAreaClicked: {
                     mainWindow.state = "noTopcoat"
@@ -211,7 +269,7 @@ SettingsPageExtensibleArea {
 
                 group: topcoatSettingRadioButton
 
-                descriptionText : "Lay glue for Cloth Topcoat"
+                descriptionText : qsTr("Lay glue for Cloth Topcoat")
 
                 onAreaClicked: {
                     mainWindow.state = "clothTopcoat"
@@ -231,7 +289,7 @@ SettingsPageExtensibleArea {
             }
 
             font.pixelSize: 22
-            text : "Topcoat Thickness"
+            text : qsTr("Topcoat Thickness")
 
             Behavior on opacity {PropertyAnimation {}}
         }
@@ -300,7 +358,7 @@ SettingsPageExtensibleArea {
                 id : psiValue
 
                 readOnly: true
-                text : "50 PSI"
+                text : qsTr("50 PSI")
                 height : 30
                 width : 60
             }
@@ -319,7 +377,7 @@ SettingsPageExtensibleArea {
             }
 
             font.pixelSize: 22
-            text : "Topcoat Weave"
+            text : qsTr("Topcoat Weave")
 
             Behavior on opacity { PropertyAnimation { } }
         }
@@ -408,21 +466,6 @@ SettingsPageExtensibleArea {
                 PropertyChanges { target:  sliderTextDescription; opacity :1 }
                 PropertyChanges { target:  descriptionTopcoatWeave; opacity : 1; }
                 PropertyChanges { target:  sliderHeight; opacity : 1; }
-                PropertyChanges { target: settingsPageManager; currentSelectedDirection:
-                    {
-                        if(topcoatSettings.firstView == false)
-                        {
-                            topcoatSettings.firstView = true;
-                            return "both" ;
-                        }
-
-                        else
-                        {
-                            return settingsPageManager.currentSelectedDirection
-                        }
-                    }
-                }
-
             },
             State {
                 name : "noTopcoat"

@@ -7,8 +7,63 @@ SettingsPageExtensibleArea {
     id : posting
 
     index : 0
-    title : "Posting"
+    title : qsTr("Posting")
     property alias root : root
+
+    // return posting values for foot (left or right)
+    function getPostingValues(foot) {
+        var upBox, downBox
+        if (foot === "left") {
+            upBox = leftUpBox
+            downBox = leftDownBox
+        } else if (foot === "right") {
+            upBox = rightUpBox
+            downBox = rightDownBox
+        }
+
+        var angleHeal = upBox.varusVal
+        var verticleHeal = upBox.verticleVal
+        var varusDirectionHeal = upBox.varusDirection
+        var angleFore = downBox.varusVal
+        var verticleFore = downBox.verticleVal
+        var varusDirectionFore = downBox.varusDirection
+        return [angleHeal, verticleHeal, varusDirectionHeal,
+                angleFore, verticleFore, varusDirectionFore];
+    }
+
+    // set posting values for foot (left or right)
+    function setPostingValues(foot, posting) {
+        var upBox, downBox
+        if (foot === "left") {
+            upBox = leftUpBox
+            downBox = leftDownBox
+        } else if (foot === "right") {
+            upBox = rightUpBox
+            downBox = rightDownBox
+        }
+        upBox.varusVal = posting[0]
+        upBox.verticleVal = posting[1]
+        upBox.setDirection(posting[2])
+        downBox.varusVal = posting[3]
+        downBox.verticleVal = posting[4]
+        downBox.setDirection(posting[5])
+    }
+
+    // set default posting values for both feet
+    function setDefaultValues() {
+        leftUpBox.varusVal = 0
+        leftUpBox.verticleVal = 0
+        leftUpBox.setDirection(1)
+        leftDownBox.varusVal = 0
+        leftDownBox.verticleVal = 0
+        leftDownBox.setDirection(1)
+        rightUpBox.varusVal = 0
+        rightUpBox.verticleVal = 0
+        rightUpBox.setDirection(1)
+        rightDownBox.varusVal = 0
+        rightDownBox.verticleVal = 0
+        rightDownBox.setDirection(1)
+    }
 
     Binding {
          target: root
@@ -17,17 +72,14 @@ SettingsPageExtensibleArea {
                     settingsPageManager.currentSelectedDirection : root.state
      }
 
-    Rectangle {
+    Item {
         id : root
 
         width : parent.width
         height : parent.height
 
-        color : "transparent"
         clip : true
-
-
-        state: "left" //Initialized in "Right Foot" mode
+        state: "left"
 
         anchors {
             top : parent.top
@@ -93,7 +145,7 @@ SettingsPageExtensibleArea {
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
                 font.pixelSize: height / 1.5
-                text: "Right Foot"
+                text: qsTr("Right Foot")
             }
 
             MouseArea {
@@ -135,7 +187,7 @@ SettingsPageExtensibleArea {
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
                 font.pixelSize: height / 1.5
-                text: "Left Foot"
+                text: qsTr("Left Foot")
             }
 
             MouseArea {
@@ -191,7 +243,7 @@ SettingsPageExtensibleArea {
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
                 font.pixelSize: height / 1.5
-                text: "Rearfoot"
+                text: qsTr("Rearfoot")
             }
         }
 
@@ -212,7 +264,7 @@ SettingsPageExtensibleArea {
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
                 font.pixelSize: height / 1.5
-                text: "Forefoot"
+                text: qsTr("Forefoot")
             }
         }
 
@@ -236,8 +288,6 @@ SettingsPageExtensibleArea {
             anchors.bottom: horizontalLine.top
             height: verticalLine.height / 2
             width: horizontalLine.width / 5 * 3
-
-            varusVal: 3
         }
 
         PostingBox {
@@ -248,8 +298,6 @@ SettingsPageExtensibleArea {
             anchors.top: horizontalLine.bottom
             height: verticalLine.height / 2
             width: horizontalLine.width / 5 * 3
-
-            verticleVal: 30
         }
 
         PostingBox {
@@ -260,8 +308,6 @@ SettingsPageExtensibleArea {
             anchors.top: horizontalLine.bottom
             height: verticalLine.height / 2
             width: horizontalLine.width / 5 * 3
-
-            varusVal: 3
         }
 
         states: [

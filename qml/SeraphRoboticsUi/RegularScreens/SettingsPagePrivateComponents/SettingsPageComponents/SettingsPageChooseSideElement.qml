@@ -1,17 +1,20 @@
 import QtQuick 2.4
 
+import Manipulation 1.0
+
 import "../../../Components"
 import "../../../Components/View3d"
 import "../" 1.0
+import "dynamicobjectcreation.js" as ObjectCreationScript
+import "../../../Components/Edges/drawing.js" as Drawing
 
-Rectangle {
+Item {
     id : mainWindow
 
     property alias position : textContainer.textElement
-    property alias view3dSource : view3d.meshSource
-    property alias imageBorderElement: imageBorderElement
+    property alias imageBorderElement : imageBorderElement
     property alias textContainer: textContainer
-    property alias view3d: view3d
+    property alias view3dRect: view3dRect
     property alias rawImageSource: rawImage.source
     property alias rawImageVisible: rawImage.visible
     property alias canvasContainer : canvasContainer
@@ -27,14 +30,25 @@ Rectangle {
 
     signal elementClicked()
 
-    color : "transparent"
     state : "unselect"
-    z: 99
+    z: 0
+
+    function getView3dSize() {
+        return Qt.size(ObjectCreationScript.view3d_object.width,
+                       ObjectCreationScript.view3d_object.height)
+    }
+
+    function setNewScene(source)
+    {
+        if (ObjectCreationScript.view3d_source === undefined)
+            ObjectCreationScript.createView3d(source, view3dRect, mainWindow.objectName)
+        else
+            ObjectCreationScript.view3d_object.setStlFile(source)
+    }
 
     // Function used to clear canvas area after painting was finished.
     function clearDrawArea(type)
     {
-        console.log("Clear draw area")
         var rootObject = canvasContainer.canvasPaintArea
 
         // Restore basic settings
@@ -47,12 +61,15 @@ Rectangle {
                                           rootObject.width,
                                           rootObject.height)
 
-
-        if(type !== "notCleanHistory")
+        if (type !== "notCleanHistory")
         {
-            undoRedoHistory.splice(0,undoRedoHistory.length)
-            positionDrawHistory.splice(0, positionDrawHistory.length)
-            cStep = -1
+            if (undoRedoHistory != undefined
+                    && positionDrawHistory != undefined )
+            {
+                undoRedoHistory.splice(0, undoRedoHistory.length)
+                positionDrawHistory.splice(0, positionDrawHistory.length)
+                cStep = -1
+            }
         }
 
         SettingsPageComponentsSettings.drawingAreaDetection._reset()
@@ -62,6 +79,7 @@ Rectangle {
 
         rootObject._clearDrawArea("notCleanHistory")
         rootObject.requestPaint()
+
         if(type === "clearAndClose")
         {
             if(SettingsPageComponentsSettings.m_ShellModificationsComponentPtr !== null)
@@ -139,7 +157,7 @@ Rectangle {
         SettingsPageComponentsSettings.movePadHistory.undoSizeHistory()
     }
 
-    // Function used to redo the canvach changes.
+    // Function used to redo canvas changes.
     function cRedo()
     {
         var rootObject = canvasContainer.canvasPaintArea
@@ -184,9 +202,6 @@ Rectangle {
             return false
         }
 
-        // Check if image folder exists already.
-        qmlCppWrapper._createImagesDirectoryIfNotExist()
-
         var modelObject = SettingsPageComponentsSettings.m_ShellModificationsComponentPtr
         .draggableElementList.model
 
@@ -196,7 +211,7 @@ Rectangle {
 
 
         // Create image path.
-        var path = qmlCppWrapper.getApplicationPath()+ "/customPad/"+
+        var path = qmlCppWrapper.getImagesFolderPath() + "/" +
                 customizePadName.toString()+ ".png";
 
         canvasContainer.prepareScaledImage()
@@ -212,8 +227,9 @@ Rectangle {
                         /// @note for some odd reason Qt.resolvedUrl() doesn't work here
                         "svgItem": (qmlCppWrapper.resolveUrl(path.toString())),
                         "name":    customizePadName,
-                        "m_Width":   1,
-                        "m_Height":  1,
+                        "type":    Manipulation.KCustom,
+                        "m_Width": 1,
+                        "m_Height": 1,
                         "basicRotation" :SettingsPageComponentsSettings.currentDraggablePad !== null ?
                                              SettingsPageComponentsSettings.currentDraggablePad.exampleImage.
                                              rotation : 0
@@ -270,7 +286,7 @@ Rectangle {
         var draggablePad = SettingsPageComponentsSettings.currentDraggablePad
 
         //Maps the drawing area point to the equivalent point within view3d coordinate system
-        var imagePos = view3d
+        var imagePos = view3dRect
         .mapFromItem(rootObject,
                      minX,
                      minY)
@@ -305,9 +321,9 @@ Rectangle {
 
         var view3dX = posArray[0]
         var view3dY = posArray[1]
-
         SettingsPageComponentsSettings.createObject(rootObject.toDataURL("image/png", 1),
                                                     customizePadName,
+                                                    Manipulation.KCustom,
                                                     "doubleClicked",
                                                     rootObject.width,
                                                     rootObject.height,
@@ -445,24 +461,67 @@ Rectangle {
     Image {
         id: rawImage
 
-        width: parent.width
-        height: parent.height
-        smooth: true
         visible: false
+        sourceSize.width: parent.width
+        sourceSize.height: parent.height
+        cache: false
 
         anchors {
             top : textContainer.bottom
             topMargin: 30
-            horizontalCenter: textContainer.horizontalCenter
         }
-        z: view3d.z + 1
-        opacity: 0.5
+        z: view3dRect.z + 1
+        // opacity = 1 when show only image, opacity = 0.5 when image is shown as background
+        opacity: settingsPageManager.mainSettingsPageState == "selection"
+                 && settingsPageManager.modificationState == "shellModifications" ? 1 : 0.5
+
+        Canvas {
+            id: boundaryCanvas
+
+            visible: parent.visible && parent.opacity == 1
+            anchors.fill: parent
+            contextType: "2d"
+
+            onPaint: {
+                context.save()
+                context.clearRect(0, 0, width, height)
+                context.strokeStyle = "darkblue"
+                context.lineWidth = 5
+                context.lineJoin = "round"
+
+                context.beginPath()
+                // draw boundary curve
+                var foot = qmlCppWrapper.leftFoot
+                if (rawImage.source == "image://scan_images/right")
+                    foot = qmlCppWrapper.rightFoot
+
+                var viewScale = width / foot.scanWidth()
+                var boundaryPoints = foot.getBoundaryPoints(viewScale)
+                var points = []
+                for(var i in boundaryPoints) {
+                    points.push(boundaryPoints[i].x)
+                    points.push(boundaryPoints[i].y)
+                }
+
+                Drawing.drawSpline(context, points, 0.5)
+                context.closePath()
+                context.restore()
+            }
+
+            Connections {
+                target: qmlCppWrapper
+
+                onBoundaryUpdated: {
+                    // update only selected canvas
+                    if (mainWindow.state == "select")
+                        boundaryCanvas.requestPaint()
+                }
+            }
+        }
     }
 
-    //Custom qml item to show 3D graphics.
-    View3d {
-        id : view3d
-
+    Item {
+        id: view3dRect
         anchors {
             top : textContainer.bottom
             topMargin: 30
@@ -470,16 +529,12 @@ Rectangle {
 
         z : 99
 
-        width: parent.width
-        height: parent.height
         smooth : true
 
-        MouseArea {
-            anchors.fill: parent
-
-            onClicked: {
-                elementClicked()
-            }
+        Component.onCompleted: {
+            // to have the same size for canvas and height image
+            width = Qt.binding(function() { return rawImage.width })
+            height = Qt.binding(function() { return rawImage.height })
         }
 
         Grid {
@@ -517,14 +572,14 @@ Rectangle {
         id : imageBorderElement
 
         color : "transparent"
-        width : view3d.width + 30
-        height : view3d.height + 30
+        width : view3dRect.width + 30
+        height : view3dRect.height + 30
         radius : 10
         border {
             width : 2
             color : "lightgray"
         }
-        anchors.centerIn: view3d
+        anchors.centerIn: view3dRect
     }
 
 
@@ -552,5 +607,4 @@ Rectangle {
             PropertyChanges { target: imageBorderElement; border.color:  "lightgray"}
         }
     ]
-
 }

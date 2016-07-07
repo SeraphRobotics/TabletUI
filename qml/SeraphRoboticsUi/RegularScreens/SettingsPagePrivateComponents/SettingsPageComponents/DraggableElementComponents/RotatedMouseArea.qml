@@ -65,25 +65,25 @@ Item {
         {
             var point =  mapToItem (mainElement.parent, mouse.x, mouse.y);
             var diffX = (point.x - mainElement.centerX)+centerXPointDiffrent;
-            var diffY =  (mainElement.centerY- point.y);
+            var diffY =  (mainElement.centerY - point.y);
             var rad = Math.atan (diffY / diffX);
             var deg = (rad * 180 / Math.PI);
 
             if (diffX > 0 && diffY > 0)
             {
-                m_Controler.rotation = 90 - Math.abs (deg) + oldRotation;
+                m_Controler.rotation = 90 - Math.abs(deg) + oldRotation;
             }
             else if (diffX > 0 && diffY < 0)
             {
-                m_Controler.rotation = 90 + Math.abs (deg) + oldRotation;
+                m_Controler.rotation = 90 + Math.abs(deg) + oldRotation;
             }
             else if (diffX < 0 && diffY > 0)
             {
-                m_Controler.rotation = 270 + Math.abs (deg) + oldRotation;
+                m_Controler.rotation = 270 + Math.abs(deg) + oldRotation;
             }
             else if (diffX < 0 && diffY < 0)
             {
-                m_Controler.rotation = 270 - Math.abs (deg )+ oldRotation;
+                m_Controler.rotation = 270 - Math.abs(deg)+ oldRotation;
             }
 
             imageBorder.boxSizeRotate()

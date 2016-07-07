@@ -45,22 +45,21 @@ function drawSpline(ctx, pts, t) {
     }
 }
 
-
-function drawEdge(ctx, centerX, centerY, radius) {
+function drawEdge(ctx, centerX, centerY, radius, color) {
     var xStart = centerX,
-            yStart = centerY,
-            radiusStart = 0,
-            xEnd = centerX,
-            yEnd = centerY,
-            radiusEnd = radius;
+        yStart = centerY,
+        radiusStart = 0,
+        xEnd = centerX,
+        yEnd = centerY,
+        radiusEnd = radius;
 
     var radgrad = ctx.createRadialGradient(xStart, yStart, radiusStart,
                                            xEnd, yEnd, radiusEnd);
-    radgrad.addColorStop(0,    'rgba(255, 255, 255, 1)');
-    radgrad.addColorStop(0.95, 'rgba(0, 0, 120, 1)');
-    radgrad.addColorStop(0.99, 'rgba(0, 0, 120, 1)');
-    radgrad.addColorStop(1,    'rgba(0, 0, 120, 0)');
-
+    radgrad.addColorStop(0, Qt.rgba(1, 1, 1, 1));
+    radgrad.addColorStop(0.95, color);
+    radgrad.addColorStop(0.99, color);
+    color.a = 0;
+    radgrad.addColorStop(1, color);
     ctx.fillStyle = radgrad;
 
     var x1 = centerX-radius >= 0 ? centerX-radius : 0;

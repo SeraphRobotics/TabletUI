@@ -1,19 +1,19 @@
 import QtQuick 2.4
 
-Rectangle {
+Item {
     id : topNavigationPanel
 
     property alias leftButton: leftButton
     property alias middleButton : middleButton
     property alias rightButton : rightButton
+    property alias rightBottomButton : rightBottomButton
 
     signal leftButtonClicked()
     signal rightButtonClicked()
     signal middleButtonClicked()
+    signal rightBottomButtonClicked()
 
     height : 30
-
-    color : "transparent"
 
     anchors {
         left : parent.left
@@ -34,7 +34,7 @@ Rectangle {
             left : parent.left
         }
 
-        buttonText: "2: patient history"
+        buttonText: qsTr("2: patient history")
 
         Component.onCompleted: {
             leftOrRightButton("left")
@@ -55,7 +55,7 @@ Rectangle {
         }
 
         buttonInformationText.font.pixelSize: 25
-        buttonText: "step 3: settings"
+        buttonText: qsTr("step 3: settings")
 
         Component.onCompleted: {
             leftOrRightButton("center")
@@ -74,7 +74,7 @@ Rectangle {
             top : parent.top
         }
 
-        buttonText: "4: review"
+        buttonText: qsTr("4: review")
 
         onButtonClicked: {
             rightButtonClicked()
@@ -83,6 +83,28 @@ Rectangle {
         Component.onCompleted: {
             leftOrRightButton("right")
             anchors.topMargin = -8
+            anchors.rightMargin = 0
+        }
+    }
+    NavigationButton {
+        id : rightBottomButton
+
+        visible: false
+
+        anchors {
+            top : rightButton.bottom
+            right: rightButton.right
+        }
+
+        buttonText: qsTr("save for later")
+
+        onButtonClicked: {
+            rightBottomButtonClicked()
+        }
+
+        Component.onCompleted: {
+            leftOrRightButton("right")
+            anchors.topMargin = 30
             anchors.rightMargin = 0
         }
     }

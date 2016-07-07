@@ -3,7 +3,7 @@ import ".."
 import "../../Components"
 
 GroupBoxTemplate {
-    title: "Patients"
+    title: qsTr("Patients")
 
     property real widthScaleValue: 500/1280
 
@@ -44,10 +44,8 @@ GroupBoxTemplate {
         }
     }
 
-    Rectangle {
+    Item {
         id : container
-
-        color : "transparent"
 
         width : parent.width
         height : textInput.height
@@ -68,7 +66,7 @@ GroupBoxTemplate {
 
             focus : true
 
-            placeholderText: " write patient name.."
+            placeholderText: qsTr(" write patient name..")
 
             anchors {
                 left : parent.left
@@ -101,7 +99,7 @@ GroupBoxTemplate {
             }
 
             Text {
-                text : "Search"
+                text : qsTr("Search")
                 anchors.centerIn: parent
                 color : "white"
                 font.pixelSize: 17

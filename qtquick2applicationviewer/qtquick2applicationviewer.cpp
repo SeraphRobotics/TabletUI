@@ -6,8 +6,10 @@
 
 #include <QDebug>
 
-#ifndef Q_OS_LINUX
-#include "Windows.h"
+#ifdef Q_OS_WIN
+#   include "Windows.h"
+#else
+#   include <X11/XKBlib.h>
 #endif
 
 class QtQuick2ApplicationViewerPrivate
@@ -92,12 +94,10 @@ void QtQuick2ApplicationViewer::showExpanded()
 
 void QtQuick2ApplicationViewer::_setCapsLockPressed()
 {
-
-#ifndef Q_OS_LINUX
     auto checkCapsLockState = [] ()
     {
         // platform dependent method of determining if CAPS LOCK is on
-#ifdef Q_OS_WIN32 // MS Windows version
+#ifdef Q_OS_WIN // MS Windows version
         return GetKeyState(VK_CAPITAL) == 1;
 #else // X11 version (Linux/Unix/Mac OS X/etc...)
         Display * d = XOpenDisplay((char*)0);
@@ -109,13 +109,12 @@ void QtQuick2ApplicationViewer::_setCapsLockPressed()
             caps_state = (n & 0x01) == 1;
         }
         return caps_state;
-#endif;
+#endif
     };
 
     m_CapsLockPressed = checkCapsLockState();
     qDebug()<<"Check caps lock pressed state, current is :"<<m_CapsLockPressed;
     emit sigCapsLockPressedChanged();
-#endif
 }
 
 bool QtQuick2ApplicationViewer::capsLockPressed() const

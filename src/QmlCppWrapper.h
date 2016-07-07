@@ -2,16 +2,26 @@
 #define QMLCPPWRAPPER_H
 
 #include <QObject>
+#include <QVariant>
 
-#include <runtime/mastercontrolunit.h>
+#include "View/UI_structs.h"
 
-#include "Models/UsersListModel.h"
-#include "Models/PatientsListModel.h"
+class ScanManager;
+class OrthoticManager;
+class OrthoticController;
+class Foot;
+class ModelCoordinates;
+class UsersListModel;
+class PatientsListModel;
+class UsbDataModel;
+class USBManager;
 
-class ImageContoursDetector;
-class XmlFileManager;
+#ifdef USE_FAKE_SCANNER
+class FakeScannerController;
+#else
+class ScannerController;
+#endif
 
-/// @brief Class used to wrap c++ interface into QtQuick.
 class QmlCppWrapper : public QObject
 {
     Q_OBJECT
@@ -19,83 +29,134 @@ class QmlCppWrapper : public QObject
     /// @note Take a look at m_iFrameUrl description.
     Q_PROPERTY(QString iFrameUrl READ iFrameUrl WRITE setiFrameUrl
                NOTIFY sigiFrameUrlChanged)
+    Q_PROPERTY(bool usbDetected READ isUsbDetected NOTIFY usbDevicesListChanged)
+    Q_PROPERTY(QObject *leftFoot READ leftFoot WRITE setLeftFoot NOTIFY leftFootChanged)
+    Q_PROPERTY(QObject *rightFoot READ rightFoot WRITE setRightFoot NOTIFY rightFootChanged)
+    Q_PROPERTY(QObject *currentFoot READ currentFoot WRITE setCurrentFoot NOTIFY currentFootChanged)
+    Q_PROPERTY(QObject *preview3d READ preview3dCoordinates CONSTANT)
+    Q_PROPERTY(QObject *usbModel READ usbModel NOTIFY usbModelChanged)
+    Q_PROPERTY(int patientNameMinLength READ patientNameMinLength CONSTANT)
+
 public:
     explicit QmlCppWrapper(QObject *parent = 0);
     ~QmlCppWrapper();
 
 public:
-    /** Import Users list from xml to QtQuick
-     */
-    UsersListModel* getUsersList();
-
-    /** Import Patients list from xml to QtQuick
-     */
-    PatientsListModel* getPatientsList();
-
-    /** @note take a look at m_iFrameUrl description.*/
+    UsersListModel *getUsersList() const;
+    PatientsListModel *getPatientsList() const;
     QString iFrameUrl() const;
     void setiFrameUrl(const QString& iFrameUrl);
+    bool isUsbDetected() const;
 
-    /** Returns main application path which is used in qml to save customized or created pads
-     * to image folder, more details about this process are in c_ImagesFolderPath description*/
     Q_INVOKABLE QString getApplicationPath() const;
+    Q_INVOKABLE QString getImagesFolderPath() const;
+    Q_INVOKABLE QString resolveUrl(const QString &fileName) const;
+    Q_INVOKABLE QVariantList getModifications(const QSizeF &canvasSize) const;
+    Q_INVOKABLE QVariantList getOrthoticSettings() const;
+    Q_INVOKABLE bool useOrthoFile() const;
+    Q_INVOKABLE void setScan(const QString &scanId, int footType);
+    Q_INVOKABLE void setOrthotic(const QString &orthId, int footType);
+    Q_INVOKABLE void deleteScan(const QString &scanId);
+    Q_INVOKABLE void deleteOrthotic(const QString &orthId);
+    Q_INVOKABLE void saveOrtho(const QString &patientId, const QString &doctorId);
+    Q_INVOKABLE void generateStlModels();
+    Q_INVOKABLE void generateGcode();
+    Q_INVOKABLE void recalculateBoundary(const QVariantList &userPoints, qreal canvasScale);
+    Q_INVOKABLE void initFeet(qreal leftViewScale, qreal rightViewScale);
+    Q_INVOKABLE void startScanner();
+    Q_INVOKABLE void addScanToExistingPatient(const QStringList &scanIds,
+                                              const QString &patientId,
+                                              const QString &doctorId);
+    Q_INVOKABLE void newPatientFromScan(const QStringList &scanIds,
+                                        const QString &patientName,
+                                        const QString &comments,
+                                        const QString &doctorId);
+    Q_INVOKABLE void removeUsbItem(int index);
+    Q_INVOKABLE void transferRxToUsb(const QString &orthoId);
+    Q_INVOKABLE void cleanFeetModifications();
+    Q_INVOKABLE bool isSingleFootMode() const;
+    Q_INVOKABLE void initScanner();
+    Q_INVOKABLE void cleanScanner();
 
-    /** Qml helper for adding file:/// correctly into image directory.
-     * for some odd reason Qt.resolvedUrl() doesn't work here*/
-    Q_INVOKABLE QString resolveUrl(const QString &fileName);
-
-    /** Saves pad data to xml file.*/
-    Q_INVOKABLE void saveShellModifications();
-
-    /** Append pad from Qml View3d ui element to list, which is used to save them to xml files later
-     * @param - direction(left, right).
-     * @param - name(Pad name).
-     * @param - depth, height, stiffness - Customized values for specific pad.
-     * @param - imageData - Image that contains specific pad view area.
-     * @param - startingXPos, startingYPos - Starting x,y position within foot coordinate system.
-     */
-    Q_INVOKABLE void appendElementToShellList(const QString &direction,
-                                              const QString &name,
-                                              const double &depth,
-                                              const double &height,
-                                              const double &stiffness,
-                                              const QImage &imageData,
-                                              const int &startingXPos,
-                                              const int &startingYPos);
-
-    /** Checks if image destination folder exists and creates a new one if not,
-     * see description of c_ImagesFolderPath to learn more about this */
-    Q_INVOKABLE void _createImagesDirectoryIfNotExist() const;
-
+    void setLeftFoot(QObject *leftFoot);
+    QObject *leftFoot() const;
+    void setRightFoot(QObject *rightFoot);
+    QObject *rightFoot() const;
+    void setCurrentFoot(QObject *foot);
+    QObject *currentFoot() const;
+    QObject *preview3dCoordinates() const;
+    QObject *usbModel() const;
+    int patientNameMinLength() const;
 
 signals:
     void sigiFrameUrlChanged() const;
+    void showAnimationProgress(const QString &text) const;
+    void hideAnimationProgress() const;
+    void generateGcodeFinished() const;
+    void generateGcodeFailed(const QString &error) const;
+    void usbConnected() const;
+    void usbDisconnected() const;
+    void usbDevicesListChanged() const;
+    void scannerDetected() const;
+    void scannerDisconnected() const;
+    void scanProgressUpdated(int progress) const;
+    void scanCompleted() const;
+    void scanError() const;
+    void scanStarted() const;
+    void scanImageGenerated() const;
+    void boundaryUpdated() const;
+    void invalidOrthotic(const QString &orthId) const;
+    void leftFootChanged() const;
+    void rightFootChanged() const;
+    void currentFootChanged() const;
+    void usbModelChanged() const;
+    void invalidScan(const QString &scanId) const;
+    void showScan() const;
+    void transferRxFinished() const;
+    void transferRxFailed(const QString &error) const;
+    void footSideChanged(const QString &footSide) const;
 
 private:
-    void _setUsersList();
-    void _setPatientsList();
+    void setUsersList();
+    void setPatientsList();
+    void processUpdatedBoundary(FAHLoopInXYPlane *loop);
+    void processScanImageGenerated(const QImage &image);
+    void processModelGenerationFinished(const QString &modelFileName);
+    void processGcodeGenerated(const QString &fileName);
+    void processTransferRxFinished(const QString &fileName);
+    void generateStlModel(Foot *foot);
+    void disconnectOrthoticController();
+    void connectOrthoticController();
+    QPair<QString, QString> getLeftRightScans(const QStringList &scanIds) const;
+    void addRxItem(const QString &fileName);
+    void cleanFeetData();
+    void initSiblingFoot(const QString &scanId, int footType);
+    void copyScanFromUsb(const QString &scanId) const;
 
-private:
-    MasterControlUnit m_MasterControlUnit;
-    XmlFileManager *m_XmlManager;
-
-    UsersListModel* m_UsersList;
-    PatientsListModel* m_PatientsList;
-
-    ImageContoursDetector *m_ImageContoursDetector; /// @note - Class for borders detection.
-
-    QString m_iFrameUrl; /// @note current popup showing url Activated via Tutorial button.
-    ///@note Or on Page 9 via order materials and contact for support text links.
-
+    ScanManager *m_ScanManager = nullptr;
+    OrthoticManager *m_OrthoticManager = nullptr;
+    OrthoticController *m_OrthoticController = nullptr;
+#ifdef USE_FAKE_SCANNER
+    FakeScannerController *m_ScanController = nullptr;
+#else
+    ScannerController *m_ScanController = nullptr;
+#endif
+    QVector<QString> m_UsbDevices;
+    UsersListModel *m_UsersList = nullptr;
+    PatientsListModel *m_PatientsList = nullptr;
+    QString m_iFrameUrl;
     const QString c_ImagesFolderPath;
     /// @note path for folder where application saving all custom created pads images.
     /// Currently application just save it on application working and delete or application
     ///  This way we can easily add all saved pad always on application start.If we want.
 
-    /// @noteList which contains all pads for specific foot.List is create via  appendElementToShellList
-    /// and save to xml files via saveShellModifications function.
-    QList<UI_Shell_Modification> m_LeftElementShells;
-    QList<UI_Shell_Modification> m_RightElementShells;
+    Foot *m_LeftFoot = nullptr;
+    Foot *m_RightFoot = nullptr;
+    Foot *m_CurrentFoot = nullptr;
+    ModelCoordinates *m_Preview3dCoordinates = nullptr;
+    UsbDataModel *m_UsbDataModel = nullptr;
+    USBManager *m_UsbManager = nullptr;
+    bool m_SingleFootMode = false;
 };
 
 #endif // QMLCPPWRAPPER_H

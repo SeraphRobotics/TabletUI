@@ -11,7 +11,7 @@ SettingsPageExtensibleArea {
     z : 1
     index : 1
 
-    title : "Shell Modifications"
+    title : qsTr("Shell Modifications")
 
     property alias elementSettings : elementSettings
     property alias padCreator: padCreator
@@ -49,7 +49,6 @@ SettingsPageExtensibleArea {
         {
             _mainWindow.unlockResize()
             state = "down"
-            SettingsPageComponentsSettings.unselectCurrentDraggablePad()
         }
     }
 

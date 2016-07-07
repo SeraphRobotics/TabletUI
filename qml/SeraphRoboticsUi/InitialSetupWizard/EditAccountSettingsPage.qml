@@ -11,7 +11,7 @@ PageTemplate {
     NavigationButton {
         id : leftNavigationButton
 
-        buttonText : "back & undo changes"
+        buttonText : qsTr("back & undo changes")
 
         onButtonClicked:  {
             stateManager.setState("accountSetupState")
@@ -24,7 +24,7 @@ PageTemplate {
     NavigationButton {
         id : rightNavigationButton
 
-        buttonText : "save & continue"
+        buttonText : qsTr("save & continue")
         onButtonClicked:  {
             applicationSettings.saveAccountSettingsToIniFile(accountSettings.pinRequireValue,
                                                              accountSettings.loginByPrescriberValue,
@@ -61,7 +61,7 @@ PageTemplate {
         font.pixelSize: 25
 
         text :
-            "If you choose, you may now adjust your settings."
+            qsTr("If you choose, you may now adjust your settings.")
     }
 
     AccountSettingsGroupBox {
@@ -103,11 +103,11 @@ PageTemplate {
         }
 
         text :
-            "<b>Default Settings</b><br/>
+            qsTr("<b>Default Settings</b><br/>
 Pin required for login<br/>
 Prescribers must login as themselves<br/>
 Auto-assign new patients to currently logged in prescriber<br/>
-(can reassign patients later as needed)<br/>"
+(can reassign patients later as needed)<br/>")
     }
 
     SequentialAnimation {

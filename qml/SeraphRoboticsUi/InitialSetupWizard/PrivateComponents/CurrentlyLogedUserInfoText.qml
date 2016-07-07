@@ -10,7 +10,7 @@ GroupBoxTemplate {
     height : heightScaleValue*parent.height
     width : widthScaleValue*parent.width
 
-    title:   "Currently logged in as"
+    title:   qsTr("Currently logged in as")
 
     Image {
         id: iconImage

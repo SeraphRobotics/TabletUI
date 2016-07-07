@@ -4,22 +4,28 @@ import QtQuick.Controls 1.2
 
 import "../"
 
-Rectangle {
+Item {
     id: postingBox
 
     property int cellWidth: width / 3
     property int varusVal: 0
     property int verticleVal: 0
+    property bool varusDirection: checkingCircle1.checked
+
+    function setDirection(direction) {
+        if (direction === 0)
+            checkingCircle2.checked = true
+        else
+            checkingCircle1.checked = true
+    }
 
     state: "activeState"
-    color: "transparent"
     y: parent.height / 2; x: 0
     width: parent.width; height: parent.height / 2
 
-    Rectangle {
+    Item {
         id: textRect1
 
-        color: "transparent"
         anchors.left: parent.left
         anchors.top: parent.top
         anchors.margins: height / 2
@@ -40,10 +46,9 @@ Rectangle {
         }
     }
 
-    Rectangle {
+    Item {
         id: textRect2
 
-        color: "transparent"
         anchors.left: textRect1.right
         anchors.top: parent.top
         anchors.topMargin: height / 2
@@ -65,10 +70,9 @@ Rectangle {
         }
     }
 
-    Rectangle {
+    Item {
         id: textRect3
 
-        color: "transparent"
         anchors.left: textRect2.right
         anchors.top: parent.top
         anchors.topMargin: height / 2
@@ -83,7 +87,7 @@ Rectangle {
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             font.pixelSize: height / 2
-            text: "Verticle"
+            text: qsTr("Verticle")
 
             Behavior on color {
                 ColorAnimation {}
@@ -105,7 +109,6 @@ Rectangle {
         anchors.top: textRect1.bottom
         anchors.horizontalCenter: textRect1.horizontalCenter
         width: parent.cellWidth / 5
-
     }
 
     StyledRadioButton {
@@ -260,8 +263,8 @@ Rectangle {
     states: [
         State {
             name: "activeState"
-            PropertyChanges { target: text1; color: "#666666"; text: "Varus" }
-            PropertyChanges { target: text2; color: "#666666"; text: "Vargus" }
+            PropertyChanges { target: text1; color: "#666666"; text: qsTr("Varus") }
+            PropertyChanges { target: text2; color: "#666666"; text: qsTr("Vargus") }
             PropertyChanges { target: text3; color: "#666666"}
             PropertyChanges { target: checkingCircle1; visible: true }
             PropertyChanges { target: checkingCircle2; visible: true }
@@ -278,9 +281,9 @@ Rectangle {
             PropertyChanges {
                 target: text1;
                 color: "#B3B3B3";
-                text: (checkingCircle1.checked) ? "Varus" : "Vargus"
+                text: (checkingCircle1.checked) ? qsTr("Varus") : qsTr("Vargus")
             }
-            PropertyChanges { target: text2; color: "#B3B3B3"; text: "Verticle" }
+            PropertyChanges { target: text2; color: "#B3B3B3"; text: qsTr("Verticle") }
             PropertyChanges { target: text3; color: "transparent"}
             PropertyChanges { target: checkingCircle1; visible: false }
             PropertyChanges { target: checkingCircle2; visible: false }

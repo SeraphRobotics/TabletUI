@@ -4,22 +4,32 @@
 
 #include <QDebug>
 
+/*!
+ * \class QmlPageStateManager
+ * \brief Class used to switch between screens
+ */
+
 QmlPageStateManager::QmlPageStateManager(QObject *parent) :
     QObject(parent)
 {
     connect(&ApplicationSettingsManager::getInstance(),
-            SIGNAL(setStateOnApplicationStart(const QString&)),
-            this, SLOT(setState(const QString&)));
+            &ApplicationSettingsManager::setStateOnApplicationStart,
+            this,
+            &QmlPageStateManager::setState);
 }
 
+/*!
+ * \brief Set new state
+ * \param newState
+ */
 void QmlPageStateManager::setState(const QString &newState)
 {
-    qDebug()<<__FUNCTION__<<newState;
+    qDebug() << "new state:" << newState;
 
-    if(newState.isEmpty() || newState == m_CurrentState)
+    if (newState.isEmpty() || newState == m_CurrentState)
     {
-        qDebug()<<"Warning: state name is empty,"
-                  "duplicated, or popup open, this should not happen:)";
+        qDebug() << "Warning: state name is empty,"
+                    "duplicated, or popup open, this should not happen:)";
         return;
     }
 
@@ -28,19 +38,13 @@ void QmlPageStateManager::setState(const QString &newState)
     emit sigSwitchToSpecificScreen(newState);
 }
 
+/*!
+ * \brief Return previous state
+ * \return
+ */
 QString QmlPageStateManager::previousState() const
 {
-    qDebug()<<__FUNCTION__<<m_PreviousState;
+    qDebug() << "previous state:" << m_PreviousState;
     return m_PreviousState;
-}
-
-void QmlPageStateManager::emitSaveToToolbar() const
-{
-    qDebug()<<__FUNCTION__;
-    emit sigSaveToToolbar();
-}
-void QmlPageStateManager::emitUseOnlyForThisPatient() const
-{
-    emit sigUseOnlyForThisPatient();
 }
 

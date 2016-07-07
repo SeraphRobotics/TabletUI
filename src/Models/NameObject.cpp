@@ -1,5 +1,11 @@
 #include "NameObject.h"
 
+/*!
+ * \class NameObject
+ * \brief Class used to store doctor's full name with title.
+ * NameObject = title+firstName+lastName
+ */
+
 NameObject::NameObject(const QString &firstName,
                        const QString &lastName,
                        const QString &title,
@@ -10,7 +16,6 @@ NameObject::NameObject(const QString &firstName,
     m_LastName(lastName)
 
 {
-
 }
 
 QString NameObject::firstName() const

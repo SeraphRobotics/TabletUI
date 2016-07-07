@@ -1,14 +1,10 @@
 #include <QtGui/QGuiApplication>
-#include <QQmlContext>
+#include <QSettings>
+#include <QDir>
 
-#include "qtquick2applicationviewer.h"
-#include "src/QmlPageStateManager.h"
-#include "src/QmlCppWrapper.h"
 #include "src/ApplicationSettingsManager.h"
-#include "src/Models/UsersListModel.h"
-#include "src/SettingsPageManager.h"
-
-#include "3dHelper/q3dhelper.h"
+#include "applicationview.h"
+#include "FileLocationHelper.h"
 
 int main(int argc, char *argv[])
 {
@@ -17,33 +13,24 @@ int main(int argc, char *argv[])
     QGuiApplication::setOrganizationDomain("seraphrobotics.com");
     QGuiApplication::setApplicationName("SeraphData");
 
-    QtQuick2ApplicationViewer viewer;
+    auto fileLocationHelper = FileLocationHelper::instance();
+    // For searching the scans list into Qt resources
+    QSettings settings;
+    settings.setValue("scan-directory", fileLocationHelper->getScanDir());
+    settings.setValue("ortho-directory", fileLocationHelper->getOrthoDir());
+    // TODO: ask the user necessary path to binary
+    settings.setValue("printing/slicer", ApplicationSettingsManager::getInstance().slic3rBinPath());
+    settings.setValue("printing/plastic_ini", qApp->applicationDirPath() + "/p.ini");
+    settings.setValue("printing/directory", qApp->applicationDirPath());
+    settings.setValue("printing/inis", qApp->applicationDirPath());
+    settings.setValue("printing/valving-python-script", qApp->applicationDirPath() + "/toValve.py");
+    settings.setValue("printing/merge-python-script", qApp->applicationDirPath() + "/merge.py");
+    // Path where will be saved scans from scanner device
+    settings.setValue("scanner/directory", QDir::tempPath());
 
-    QmlCppWrapper cppWrapper;
-    QmlPageStateManager stateManager;
-    SettingsPageManager settingsPageManager;
-
-    viewer.rootContext()->setContextProperty("stateManager",
-                                             &stateManager);
-    viewer.rootContext()->setContextProperty("patientsListModel",
-                                             QVariant::fromValue(cppWrapper.getPatientsList()));
-    viewer.rootContext()->setContextProperty("usersListModel",
-                                             QVariant::fromValue(cppWrapper.getUsersList()));
-    viewer.rootContext()->setContextProperty("qmlCppWrapper",
-                                             &cppWrapper);
-    viewer.rootContext()->setContextProperty("applicationSettings",
-                                             &ApplicationSettingsManager::getInstance());
-    viewer.rootContext()->setContextProperty("_mainWindow",
-                                             &viewer);
-    viewer.rootContext()->setContextProperty("settingsPageManager",
-                                             &settingsPageManager);
-
-
-    // For View3d
-    qmlRegisterType<Q3DHelper>("Helpers", 1, 0, "Q3DHelper");
-
-    viewer.setMainQmlFile(QStringLiteral("qml/SeraphRoboticsUi/main.qml"));
-    viewer.showExpanded();
+    ApplicationView view;
+    view.setSource(QUrl("qrc:/qml/SeraphRoboticsUi/main.qml"));
+    view.showExpanded();
 
     ApplicationSettingsManager::getInstance().setStartingState();
 

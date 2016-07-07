@@ -5,7 +5,6 @@ import "../DraggableElementComponents" 1.0
 import "../../"
 
 Image {
-
     width: draggablePad.handleSize
     height: draggablePad.handleSize
     visible : draggablePad.frameElementsVisible
@@ -21,7 +20,6 @@ Image {
 
     MouseArea {
         id : mouseArea
-
 
         onPressed:
         {
@@ -64,7 +62,6 @@ Image {
                                                                                   draggablePad.exampleImage.rotation)
             }
         }
-
 
         anchors.fill: parent
     }

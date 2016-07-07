@@ -9,7 +9,7 @@ GroupBoxTemplate {
     height : 220
     width : 510
 
-    title: "Account Settings"
+    title: qsTr("Account Settings")
 
     property alias pinRequireValue : pinRequire.checked
     property alias loginByPrescriberValue : loginByPrescriber.checked
@@ -27,18 +27,18 @@ GroupBoxTemplate {
         ToggleButton {
             id : pinRequire
 
-            title: "require pin to login"
+            title: qsTr("require pin to login")
             checked : true
         }
         ToggleButton{
             id : loginByPrescriber
 
-            title: "login by prescriber"
+            title: qsTr("login by prescriber")
         }
         ToggleButton {
             id : autoAssignPatients
 
-            title: "auto-assign patients"
+            title: qsTr("auto-assign patients")
             checked: true
         }
     }

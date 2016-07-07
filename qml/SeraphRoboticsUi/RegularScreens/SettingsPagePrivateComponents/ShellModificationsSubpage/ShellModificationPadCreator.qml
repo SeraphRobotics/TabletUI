@@ -9,9 +9,7 @@ import "../" 1.0
 // normal state (paint area) we just need to click on paint or erase button.
 // This changes the pad object back into canvas image.
 
-Rectangle {
-    color : "transparent"
-
+Item {
     signal sigCancelCreateCustomElement(string type)
     signal sigSaveCustomPadElement(string padName)
 
@@ -79,8 +77,8 @@ Rectangle {
             leftMargin: 25
         }
 
-        text : "<p align=\"center\">Custom Pad<br/>
-                Creator</p>"
+        text : qsTr("<p align=\"center\">Custom Pad<br/>
+                Creator</p>")
         font.pixelSize: 27
     }
 
@@ -180,7 +178,7 @@ Rectangle {
             id : erase
 
             buttonElement.source: "qrc:/QmlResources/erase.png"
-            textElement.text: "erase"
+            textElement.text: qsTr("erase")
 
             anchors {
                 verticalCenter:   parent.verticalCenter
@@ -218,10 +216,9 @@ Rectangle {
         }
     }
 
-    Rectangle {
+    Item {
         id : buttonThirdArea
 
-        color : "transparent"
         anchors {
             top : secondLine.bottom
             left : parent.left
@@ -234,7 +231,7 @@ Rectangle {
         StyledButton {
             id : importStandardPad
 
-            titleText:   "<p align=\"center\">import standard pad<br/> as starting point</p>"
+            titleText:   qsTr("<p align=\"center\">import standard pad<br/> as starting point</p>")
             text.font.pixelSize: 15
             width : 200
 
@@ -280,7 +277,7 @@ Rectangle {
                 id : undo
 
                 buttonElement.source:   "qrc:/QmlResources/arrow-left.png"
-                textElement.text: "undo"
+                textElement.text: qsTr("undo")
 
                 opacity : SettingsPageComponentsSettings.drawingAreaDetection.nothingDraw === true
                           && SettingsPageComponentsSettings.movePadHistory.movePadHistoryCount === -1 ?
@@ -301,7 +298,7 @@ Rectangle {
                 id : redo
 
                 buttonElement.source:   "qrc:/QmlResources/arrow-right.png"
-                textElement.text: "redo"
+                textElement.text: qsTr("redo")
 
 
                 anchors {
@@ -332,10 +329,8 @@ Rectangle {
         }
     }
 
-    Rectangle {
+    Item {
         id : buttonFourthArea
-
-        color : "transparent"
 
         anchors {
             top : thirdLine.bottom
@@ -358,7 +353,7 @@ Rectangle {
             }
             font.pixelSize: 17
 
-            text : "<p align=\"center\">stop drawing,<br/>move pad</p>"
+            text : qsTr("<p align=\"center\">stop drawing,<br/>move pad</p>")
         }
 
         ImageBasedButton {
@@ -418,10 +413,8 @@ Rectangle {
         }
     }
 
-    Rectangle {
+    Item {
         id : buttonFifthArea
-
-        color : "transparent"
 
         anchors {
             top : fourthLine.bottom
@@ -438,7 +431,7 @@ Rectangle {
             height : 40
             width : 370
 
-            text : "name pad "
+            text : qsTr("name pad ")
 
             anchors
             {

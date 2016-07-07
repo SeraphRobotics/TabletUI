@@ -2,10 +2,8 @@ import QtQuick 2.4
 import QtQuick.Controls 1.2
 import QtQuick.Controls.Styles 1.2
 
-Rectangle {
+Item {
     id : main
-
-    color : "transparent"
 
     property alias maximumValue : slider.maximumValue
     property alias minimumValue : slider.minimumValue
@@ -22,9 +20,9 @@ Rectangle {
 
     property string tickmarkColor :  "#666666"
 
-    property string leftText : "pillow"
-    property string middleText : "cork"
-    property string rightText : "brick"
+    property string leftText : qsTr("pillow")
+    property string middleText : qsTr("cork")
+    property string rightText : qsTr("brick")
 
     height : slider.height+20
 
@@ -81,16 +79,12 @@ Rectangle {
         value: 7
         stepSize: 1
 
-        onValueChanged: print(value)
+        onValueChanged: { } // print(value)
 
         style: SliderStyle {
-            groove:
-
-                Rectangle {
+            groove: Item {
                 implicitWidth: 200
                 implicitHeight: 80
-
-                color : "transparent"
 
                 Rectangle {
                     implicitWidth: parent.width
@@ -117,7 +111,6 @@ Rectangle {
                 onWidthChanged: {
                     firstTickMarksY = width/2
                 }
-
             }
 
             tickmarks: Repeater {

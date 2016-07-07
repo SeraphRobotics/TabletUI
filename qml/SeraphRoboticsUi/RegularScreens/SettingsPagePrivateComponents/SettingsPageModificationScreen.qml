@@ -13,17 +13,22 @@ import "TopcoatSettingsSubpage"
 import "../ChoosePatientScreenPrivateComponents" 1.0
 import "." 1.0
 
+import "../SettingsPagePrivateComponents/SettingsPageComponents/dynamicobjectcreation.js" as ObjectCreationScript
+
 // Screen for showing All Settings page - logic from page 20-30 from pdf.
-Rectangle {
+Item {
     id : mainPage
-    
-    color : "transparent"
 
     property string earlierState
 
-    property alias  sideNavigationElement: sideNavigationElement
-    property alias  sideNavigation : sideNavigation
-    property alias  shellModifications : shellModifications
+    property alias sideNavigationElement: sideNavigationElement
+    property alias sideNavigation : sideNavigation
+    property alias shellModifications : shellModifications
+    property alias rightSide: sideNavigationElement.rightSide
+    property alias leftSide: sideNavigationElement.leftSide
+    property alias posting: posting
+    property alias topcoat: topcoatSettings
+
     anchors
     {
         top : parent.top
@@ -59,10 +64,8 @@ Rectangle {
     }
     
     // Item used to position the custom qml items used to show 3D graphics
-    Rectangle {
+    Item {
         id: sideNavigation
-
-        color : "transparent"
 
         z : shellModifications.z+99
 
@@ -101,9 +104,6 @@ Rectangle {
                 //Width/Height = 0.533
                 width: Math.min(0.76*0.533*parent.width, 0.76*0.533*parent.height)
                 height: Math.min((0.76*parent.height), (0.76*parent.width))
-                view3dSource: "qrc:/exampleImages/left.stl"
-
-                rawImageSource: "qrc:/exampleImages/left-scan-cut.png"
             }
             
             rightSide
@@ -112,8 +112,6 @@ Rectangle {
                 //Width/Height = 0.533
                 width:Math.min(0.76*0.533*parent.width, 0.76*0.533*parent.height)
                 height: Math.min((0.76*parent.height), (0.76*parent.width))
-                view3dSource: "qrc:/exampleImages/right.stl"
-                rawImageSource: "qrc:/exampleImages/right-scan-cut.png"
             }
 
             Component.onCompleted:
@@ -121,15 +119,24 @@ Rectangle {
                 // Setting pointers objects that is our mediator.
                 SettingsPageComponentsSettings.m_LeftSideComponent = leftSide
                 SettingsPageComponentsSettings.m_RightSideComponent = rightSide
-                SettingsPageComponentsSettings.m_CurrentSelectedArea = rightSide
+                SettingsPageComponentsSettings.m_CurrentSelectedArea = leftSide
             }
 
             onStateChanged:
             {
-                if(state === "left")
+                if(state === "left"){
                     SettingsPageComponentsSettings.m_CurrentSelectedArea = leftSide
+                    if (settingsPageManager.modificationState === "posting") {
+                        ObjectCreationScript.posting3d_object.meshSource = qmlCppWrapper.leftFoot.stlModelFile()
+                    }
+                }
                 else if(state === "right")
+                {
                     SettingsPageComponentsSettings.m_CurrentSelectedArea = rightSide
+                    if (settingsPageManager.modificationState === "posting") {
+                        ObjectCreationScript.posting3d_object.meshSource = qmlCppWrapper.rightFoot.stlModelFile()
+                    }
+                }
             }
 
             // When clicked 'Both' button and settingsPageManager.modificationState === "topcoat"
@@ -168,14 +175,13 @@ Rectangle {
                     SettingsPageComponentsSettings.setTopcoatThickness(
                                 topcoatSettings.currentTopcoatThicknessValue,
                                 true,
-                                topcoatSettings.currentTopcoatWeave)
+                                topcoatSettings.currentTopcoatWeave,
+                                topcoatSettings.currentTopcoatStyle)
                     settingsPageManager.currentSelectedDirection = "both"
 
                     // Added blue border to "accept button"
                     if( topcoatSettings.checkIfValuesTheSameAndCurrentSettingsAlso() === true)
-                    {
                         topcoatSettings.rec_save.isSave = true
-                    }
                     else
                         topcoatSettings.rec_save.isSave = false
                 }
@@ -183,26 +189,20 @@ Rectangle {
         }
         
         /// Posting header 3d views.
-        View3dPosting {
-            id: view3dPosting
-            
+        Item {
+            id: view3dPostingParent
+
             anchors {
                 top: parent.top
                 bottom : parent.bottom
                 topMargin: 30
                 bottomMargin: 30
-                
+
                 left : parent.left
                 leftMargin: 80
                 right : parent.right
                 rightMargin: 80
             }
-            // basic values.
-            meshSource: SettingsPageComponentsSettings.m_StlFilePath0
-            meshColor: "lightgrey"
-            commonNavigation: false
-            commonFillColor: "transparent"
-            opacity : 0
         }
     }
     
@@ -233,13 +233,13 @@ Rectangle {
         states: [
             State {
                 name: "HeightMapVisible"
-                PropertyChanges { target: showHeightMapLabel; text: "hide height map" }
+                PropertyChanges { target: showHeightMapLabel; text: qsTr("hide height map") }
                 PropertyChanges { target: sideNavigationElement.leftSide; rawImageVisible: true }
                 PropertyChanges { target: sideNavigationElement.rightSide; rawImageVisible: true }
             },
             State {
                 name: "HeightMapNotVisible"
-                PropertyChanges { target: showHeightMapLabel; text: "show height map" }
+                PropertyChanges { target: showHeightMapLabel; text: qsTr("show height map") }
                 PropertyChanges { target: sideNavigationElement.leftSide; rawImageVisible: false }
                 PropertyChanges { target: sideNavigationElement.rightSide; rawImageVisible: false }
             }
@@ -327,36 +327,16 @@ Rectangle {
         }
     }
     
-    // Catch gray save to tollbar popup if user customized or created pad
-    // and then clicked accepted button .Can choose two option ,both is
-    // catch here.
-    Connections {
-        target : stateManager
-        
-        onSigSaveToToolbar:
-        {
-            // Add pad to pad list.
-            SettingsPageComponentsSettings.m_CurrentSelectedArea.saveDrawAreaToToolbar()
-            settingsPageManager.shellModificationsState = "down"
-        }
-        onSigUseOnlyForThisPatient:
-        {
-            SettingsPageComponentsSettings.m_CurrentSelectedArea.useOnlyForThisPad()
-            settingsPageManager.shellModificationsState = "down"
-        }
-    }
-    
     states: [
         State {
             name: "topcoat"
-            PropertyChanges { target: view3dPosting; opacity: 0 }
+            PropertyChanges { target: view3dPostingParent; opacity: 0 }
             PropertyChanges { target: sideNavigationElement; opacity: 1 }
             PropertyChanges { target: showHeightMapLabel; visible: true }
             StateChangeScript {
                 script : hideAllHeaders()
             }
             PropertyChanges { target: topcoatSettings; state: "down" }
-
             StateChangeScript {
                 script : SettingsPageComponentsSettings.hideDraggableElements()
             }
@@ -366,7 +346,7 @@ Rectangle {
         },
         State {
             name: "posting"
-            PropertyChanges { target: view3dPosting; opacity: 1 }
+            PropertyChanges { target: view3dPostingParent; opacity: 1 }
             PropertyChanges { target: sideNavigationElement; opacity: 0 }
             PropertyChanges { target: showHeightMapLabel; visible: false }
             StateChangeScript {
@@ -379,7 +359,7 @@ Rectangle {
         },
         State {
             name: "shellModifications"
-            PropertyChanges { target: view3dPosting; opacity: 0 }
+            PropertyChanges { target: view3dPostingParent; opacity: 0 }
             PropertyChanges { target: sideNavigationElement; opacity: 1 }
             PropertyChanges { target: showHeightMapLabel; visible: true }
             StateChangeScript {
@@ -397,11 +377,13 @@ Rectangle {
             PropertyChanges { target: modificationPage; opacity : 1 }
             PropertyChanges { target: viewButton;  visible : true }
             PropertyChanges { target: topNavigationPanel.leftButton;
-                buttonText : "3: settings"}
+                buttonText : qsTr("3: settings")}
             PropertyChanges { target: topNavigationPanel.middleButton;
-                buttonText : "step 4: review"}
+                buttonText : qsTr("step 4: review")}
             PropertyChanges { target: topNavigationPanel.rightButton;
-                buttonText : "5: save & load to USB"}
+                buttonText : qsTr("5: save & load to USB")}
+            PropertyChanges { target: topNavigationPanel.rightBottomButton;
+                visible : true }
             PropertyChanges { target: sideNavigationElement;
                 opacity: 1 }
             AnchorChanges {
@@ -409,7 +391,7 @@ Rectangle {
                 anchors.horizontalCenter: undefined
                 anchors.left:  sideNavigation.parent.left
             }
-            PropertyChanges { target: view3dPosting; opacity: 0 }
+            PropertyChanges { target: view3dPostingParent; opacity: 0 }
             PropertyChanges { target: extensibleAreas; visible: false }
             PropertyChanges { target: sideNavigation; anchors.topMargin:  60 }
             PropertyChanges { target: showHeightMapLabel; visible: true }
@@ -443,6 +425,10 @@ Rectangle {
         if(state != "3dReview")
             earlierState = state
 
+        if (state === "posting") {
+            var source = qmlCppWrapper.currentFoot.stlModelFile()
+            ObjectCreationScript.createPosting3d(source, view3dPostingParent)
+        }
 
         SettingsPageComponentsSettings.unselectCurrentDraggablePad()
     }
@@ -463,4 +449,12 @@ Rectangle {
         state = "shellModifications"
     }
 
+    Connections {
+        target: qmlCppWrapper
+
+        onScanImageGenerated: {
+            sideNavigationElement.leftSide.rawImageSource = "image://scan_images/left"
+            sideNavigationElement.rightSide.rawImageSource = "image://scan_images/right"
+        }
+    }
 }

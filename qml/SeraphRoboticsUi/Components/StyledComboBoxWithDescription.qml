@@ -1,10 +1,9 @@
 import QtQuick 2.4
 
-Rectangle {
+Item {
     property alias text: styledText.text
     property alias comboBox: comboBox
 
-    color: "transparent";
     width: parent.width; height: parent.height / 5;
     anchors.horizontalCenter: parent.horizontalCenter
 
@@ -25,7 +24,7 @@ Rectangle {
 
         height: parent.height
 
-        text: "Text"
+        text: qsTr("Text")
         color : "#666666"
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter

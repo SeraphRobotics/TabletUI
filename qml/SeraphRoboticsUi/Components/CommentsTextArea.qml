@@ -62,9 +62,8 @@ Column {
     Repeater {
         model: (mainWindow.height-10)/textArea.lineHeight
 
-        Rectangle {
+        Item {
             width: mainWindow.width-30; height: textArea.lineHeight
-            color : "transparent"
 
             anchors {
                 left : parent.left

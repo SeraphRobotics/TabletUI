@@ -5,12 +5,8 @@
 #include <QMetaType>
 #include <QVariant>
 
-#include "NameObject.h"
+class NameObject;
 
-/**
- * @brief The UserObject class
- * Class used to store user data.
- */
 class UserObject : public QObject
 {
     Q_OBJECT

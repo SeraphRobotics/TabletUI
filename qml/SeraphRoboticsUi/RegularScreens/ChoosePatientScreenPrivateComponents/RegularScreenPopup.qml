@@ -3,6 +3,8 @@ pragma Singleton
 import QtQuick 2.4
 
 import "../../Components"
+import "../SettingsPagePrivateComponents" 1.0
+
 Item {
     id : background
 
@@ -62,8 +64,8 @@ Item {
             color : "gray"
             font.pixelSize: 15
 
-            text : "<p align=\"center\">This patient is useally treated by another doctor,<br/>
-                 how would you like to proceed?</p>"
+            text : qsTr("<p align=\"center\">This patient is useally treated by another doctor,<br/>
+                 how would you like to proceed?</p>")
         }
 
         Column {
@@ -80,12 +82,14 @@ Item {
 
                 width : 220
                 height : 50
-                titleText : "make my patient"
+                titleText : qsTr("make my patient")
 
                 onCustomClicked: {
                     if(background.state == "padCreatorPopup")
                     {
-                        stateManager.emitSaveToToolbar()
+                        // Add pad to pad list.
+                        SettingsPageComponentsSettings.m_CurrentSelectedArea.saveDrawAreaToToolbar()
+                        settingsPageManager.shellModificationsState = "down"
                     }
                     else if(background.state == "topcoatSettingsApply")
                     {
@@ -99,12 +103,13 @@ Item {
 
                 width : 220
                 height : 50
-                titleText : "edit only"
+                titleText : qsTr("edit only")
 
                 onCustomClicked: {
                     if(background.state == "padCreatorPopup")
                     {
-                        stateManager.emitUseOnlyForThisPatient()
+                        SettingsPageComponentsSettings.m_CurrentSelectedArea.useOnlyForThisPad()
+                        settingsPageManager.shellModificationsState = "down"
                     }
                     secondButtonClickedSignal()
                     background.opacity = 0
@@ -118,16 +123,16 @@ Item {
             name : "padCreatorPopup"
             PropertyChanges {
                 target: descriptionText
-                text : "<p align=\"center\">Would you like to save this pad to your tool bar<br/>
-for future use on other prescriptions?</p>"
+                text : qsTr("<p align=\"center\">Would you like to save this pad to your tool bar<br/>
+for future use on other prescriptions?</p>")
             }
             PropertyChanges {
                 target: firstButton
-                titleText: "Yes: save to tool bar"
+                titleText: qsTr("Yes: save to tool bar")
             }
             PropertyChanges {
                 target: secondButton
-                titleText: "No: use only for this patient"
+                titleText: qsTr("No: use only for this patient")
             }
             PropertyChanges {
                 target: firstButton
@@ -142,16 +147,16 @@ for future use on other prescriptions?</p>"
             name : "topcoatSettingsApply"
             PropertyChanges {
                 target: descriptionText
-                text : "<p align=\"center\">Do you want to apply<br/>
-settings from current side to both sides?</p>"
+                text : qsTr("<p align=\"center\">Do you want to apply<br/>
+settings from current side to both sides?</p>")
             }
             PropertyChanges {
                 target: firstButton
-                titleText: "Yes"
+                titleText: qsTr("Yes")
             }
             PropertyChanges {
                 target: secondButton
-                titleText: "No"
+                titleText: qsTr("No")
             }
         }
 

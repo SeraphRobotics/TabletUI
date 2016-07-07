@@ -33,6 +33,10 @@ Item {
 
         onElementClicked:
         {
+            // disable changing foot if we have only 1 foot
+            if (qmlCppWrapper.isSingleFootMode())
+                return
+
             SettingsPageComponentsSettings.unselectCurrentDraggablePad()
             settingsPageManager.currentSelectedDirection = "left"
         }
@@ -41,7 +45,7 @@ Item {
     ChooseSideElement {
         id : middleTextArea
 
-        textElement.text: "both"
+        textElement.text: qsTr("both")
 
         anchors {
             horizontalCenter: parent.horizontalCenter
@@ -51,6 +55,10 @@ Item {
             anchors.fill: parent
 
             onClicked: {
+                // disable changing foot if we have only 1 foot
+                if (qmlCppWrapper.isSingleFootMode())
+                    return
+
                 SettingsPageComponentsSettings.unselectCurrentDraggablePad()
                 if(settingsPageManager.shellModificationsState === "padCreator")
                 {
@@ -76,7 +84,7 @@ Item {
         id : rightSide
         objectName: "rightSide"
 
-        position.text: "right"
+        position.text: qsTr("right")
 
         anchors {
             left : middleTextArea.right
@@ -84,6 +92,10 @@ Item {
         }
 
         onElementClicked: {
+            // disable changing foot if we have only 1 foot
+            if (qmlCppWrapper.isSingleFootMode())
+                return
+
             SettingsPageComponentsSettings.unselectCurrentDraggablePad() /// Selected draggable element lost focus so we need to unselect this element
             settingsPageManager.currentSelectedDirection = "right"
         }
@@ -97,34 +109,18 @@ Item {
             PropertyChanges { target: leftSide.textContainer;  border.color:  "transparent"}
             PropertyChanges { target: rightSide.textContainer; border.color:  "transparent"}
             PropertyChanges { target: middleTextArea;  border.color:  "#407ee2"}
-            PropertyChanges { target: SettingsPageComponentsSettings;
-                m_StlFilePath0 : "qrc:/exampleImages/left.stl"}
-            PropertyChanges { target: SettingsPageComponentsSettings;
-                m_StlFilePath1 : "qrc:/exampleImages/right.stl"}
-            PropertyChanges { target: leftSide;   z:  1}
-            PropertyChanges { target: rightSide;   z:  0}
         },
         State {
             name : "left"
             PropertyChanges { target: leftSide.textContainer;  border.color:  "#407ee2"}
             PropertyChanges { target: leftSide;   state:  "select"}
             PropertyChanges { target: rightSide;  state:  "unselect"}
-            PropertyChanges { target: SettingsPageComponentsSettings;
-                m_StlFilePath0 : "qrc:/exampleImages/left.stl"}
-            PropertyChanges { target: SettingsPageComponentsSettings;
-                m_StlFilePath1 : ""}
-            PropertyChanges { target: leftSide;   z:  1}
-            PropertyChanges { target: rightSide;   z:  0}
         },
         State {
             name : "right"
             PropertyChanges { target: rightSide.textContainer; border.color:  "#407ee2"}
             PropertyChanges { target: leftSide;   state:  "unselect"}
             PropertyChanges { target: rightSide;  state:  "select"}
-            PropertyChanges { target: SettingsPageComponentsSettings;
-                m_StlFilePath0 : "qrc:/exampleImages/right.stl"}
-            PropertyChanges { target: SettingsPageComponentsSettings;
-                m_StlFilePath1 : ""}
         }
     ]
 

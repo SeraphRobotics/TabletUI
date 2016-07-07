@@ -1,19 +1,26 @@
 import QtQuick 2.4
-import QtQuick.Controls 1.2
-import QtQuick.Controls.Styles 1.2
+import QtQuick.Controls 1.4
+import QtQuick.Controls.Styles 1.4
+import QtQuick.Dialogs 1.2
 
-import ".."
+import "." 1.0
 import "../../Components"
 
-Rectangle {
-
+Item {
     visible: false
     anchors.fill: parent
-    color : "transparent"
 
     anchors {
         top : parent.header.bottom
         topMargin: 35
+    }
+
+    // clean user input in text fields
+    function cleanUserInput()
+    {
+        anotherScanId.text = ""
+        patientNameInput.text = ""
+        commentsTextArea.text = ""
     }
 
     GrayDescriptionText {
@@ -27,13 +34,11 @@ Rectangle {
         }
         font.pixelSize: 20
 
-        text : "Files on USB Drive"
+        text : qsTr("Files on USB Drive")
     }
 
-    Rectangle {
+    Item {
         id : headerContainer
-
-        color : "transparent"
 
         anchors {
             top : pageTitle.bottom
@@ -58,7 +63,7 @@ Rectangle {
                 left : parent.left
                 leftMargin: 60/560*parent.width
             }
-            text : "Timestamp"
+            text : qsTr("Timestamp")
         }
         GrayDescriptionText {
             font {
@@ -66,19 +71,21 @@ Rectangle {
                 bold: true
             }
             anchors {
+                top : parent.top
                 left : parent.left
                 leftMargin: 265/560*parent.width
             }
-            text : "Type"
+            text : qsTr("Type")
         }
         GrayDescriptionText {
             font {
                 pixelSize: 16
                 bold: true
             }
-            text : "Status"
+            text : qsTr("Status")
 
             anchors {
+                top : parent.top
                 left : parent.left
                 leftMargin: 410/560*parent.width
             }
@@ -88,8 +95,6 @@ Rectangle {
     ListView {
         id : usbItemsList
 
-        model : UsbFakeModel {
-        }
         highlightMoveVelocity : 0
         anchors {
             top : headerContainer.bottom
@@ -103,30 +108,55 @@ Rectangle {
         delegate: ChoosePatientScreenDelegate {
             listView : usbItemsList
         }
+
+        Component.onCompleted: {
+            model = qmlCppWrapper.usbModel
+        }
     }
+
     Row {
         id : buttonsRow
 
-        spacing : 150
+        spacing : 100
         anchors {
             top : usbItemsList.bottom
             topMargin: 15
             horizontalCenter: parent.horizontalCenter
         }
+
         StyledButton {
             id : deleteButton
 
             anchors.verticalCenter: parent.verticalCenter
-            width : 120
-            titleText : "delete"
+            width : 160
+            titleText : qsTr("delete")
 
+            onCustomClicked: {
+                questionDialog.visible = true
+            }
         }
+
         StyledButton {
             id : addScan
 
-            width : 160
+            width : 180
             height : 60
-            titleText : "add scan to\nexisting patient"
+            titleText : qsTr("add scan to\nexisting patient")
+
+            onCustomClicked: {
+                if (!usbItemsList.model.isScan(usbItemsList.currentIndex)) {
+                    messageDialog.text = qsTr("You cannot use Rx item as Scan. Please select Scan item.")
+                    messageDialog.visible = true
+                    messageDialog.calculateImplicitWidth()
+                    return
+                }
+
+                var scanIds = [usbItemsList.model.id(usbItemsList.currentIndex),
+                               anotherScanId.text]
+                var patient = patientsListModel.getSpecificItem(patientsListModel.currentIndex)
+                qmlCppWrapper.addScanToExistingPatient(scanIds, patient.id, patient.doctorId)
+                cleanUserInput()
+            }
         }
     }
 
@@ -144,30 +174,85 @@ Rectangle {
         color : "lightgray"
     }
 
-    StyledButton {
-        id : loadScan
+    Column {
+        id: column
+        spacing: 10
 
         anchors {
             top : border.bottom
             topMargin: 15
             left : buttonsRow.left
         }
-        width : 160
-        height : 60
-        titleText : "load scan as \nnew patient"
+
+        StyledButton {
+            id : loadScan
+
+            width : 200
+            height : 60
+            titleText : qsTr("load scan as \nnew patient")
+
+            onCustomClicked: {
+                if (patientNameInput.text.length == 0) {
+                    patientNameInput.backgroundNormalBorderColor = "red"
+                    return
+                }
+                patientNameInput.backgroundNormalBorderColor = "#cccccc"
+
+                var patientName = patientNameInput.text
+                if (patientName.length < qmlCppWrapper.patientNameMinLength) {
+                    messageDialog.text = qsTr("You have specified too small patient name, please use at least %1 characters")
+                    .arg(qmlCppWrapper.patientNameMinLength)
+                    messageDialog.visible = true
+                    messageDialog.calculateImplicitWidth()
+                    return
+                }
+
+                if (patientsListModel.contains(patientName)) {
+                    // user already has patient with the same name
+                    messageDialog.text = qsTr("You already has patient with the same name")
+                    messageDialog.visible = true
+                    messageDialog.calculateImplicitWidth()
+                    return
+                }
+
+                var comments = commentsTextArea.text
+                var user = usersListModel.getSpecificItem(usersListModel.currentIndex)
+                var scanIds = [usbItemsList.model.id(usbItemsList.currentIndex),
+                               anotherScanId.text]
+                qmlCppWrapper.newPatientFromScan(scanIds, patientName, comments, user.id)
+                cleanUserInput()
+            }
+        }
+
+        GrayDescriptionText {
+            id : anotherScanDescription
+
+            width : 200
+            text : qsTr("another foot scan id")
+            font.pixelSize: 15
+            horizontalAlignment: Text.AlignHCenter
+        }
+
+        StyledTextInput {
+            id : anotherScanId
+
+            width : 200
+            height : 40
+            textColor: "#666666"
+            welcomeTextColor : "#666666"
+        }
     }
 
     GrayDescriptionText {
         id : patientNameInfo
 
-        text : "patient name"
-
+        text : qsTr("patient name")
         font.pixelSize: 20
 
         anchors {
             top : border.bottom
             topMargin: 5
-            left : loadScan.right
+            left : column.right
             leftMargin: 70
         }
     }
@@ -183,26 +268,27 @@ Rectangle {
             topMargin: 10
             left : patientNameInfo.left
             right : parent.right
-            rightMargin: 100
+            rightMargin: 80
         }
     }
 
     GrayDescriptionText {
         id : commentsTextInfo
 
-        text : "comments"
-
+        text : qsTr("comments")
         font.pixelSize: 20
 
         anchors {
             top : patientNameInput.bottom
             topMargin: 5
-            left : loadScan.right
+            left : column.right
             leftMargin: 70
         }
     }
 
     CommentsTextArea {
+        id: commentsTextArea
+
         anchors {
             top : commentsTextInfo.bottom
             topMargin: 10
@@ -211,6 +297,32 @@ Rectangle {
             bottom : parent.bottom
             bottomMargin: 20
         }
-        text : usbItemsList.model.get(usbItemsList.currentIndex).comment
+        text : usbItemsList.model.comment(usbItemsList.currentIndex)
+    }
+
+    MessageDialog {
+        id: messageDialog
+        title: qsTr("SeraphRoboticsUi")
+        icon: StandardIcon.Warning
+        standardButtons: StandardButton.Ok
+    }
+
+    MessageDialog {
+        id: questionDialog
+        title: qsTr("SeraphRoboticsUi")
+        text: qsTr("Are you sure you want to delete this item?
+                   \nThe corresponding data on usb disk will also be deleted.")
+        icon: StandardIcon.Question
+        standardButtons: StandardButton.Yes | StandardButton.No
+        onYes: qmlCppWrapper.removeUsbItem(usbItemsList.currentIndex)
+    }
+
+    Connections {
+        target: qmlCppWrapper
+
+        onUsbModelChanged: {
+            usbItemsList.model = ""
+            usbItemsList.model = qmlCppWrapper.usbModel
+        }
     }
 }

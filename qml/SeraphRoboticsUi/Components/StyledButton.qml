@@ -46,7 +46,7 @@ Rectangle {
 
         color : "#666666"
         font.pixelSize: 19
-        text : "START"
+        text : qsTr("START")
         renderType: Text.NativeRendering
 
         anchors {
@@ -63,7 +63,7 @@ Rectangle {
         onClicked:{
             if(button.opacity != 1)
                 return
-            console.log("Styled button clicked.")
+
             customClicked()
         }
         onPressed: {

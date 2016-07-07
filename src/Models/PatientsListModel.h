@@ -4,14 +4,12 @@
 #include <QObject>
 #include <QQmlListProperty>
 
-#include "PatientObject.h"
+#include "DataStructures/patientdata.h"
+#include "View/UI_structs.h"
 
-#include <QDebug>
+class PatientManager;
+class PatientObject;
 
-/**
- * @brief The PatientsListModel class
- *
- */
 class PatientsListModel : public QObject
 {
     Q_OBJECT
@@ -26,20 +24,47 @@ class PatientsListModel : public QObject
 public:
     explicit PatientsListModel(QObject *parent = 0);
 
+    QList<UI_Patient> getPatientsList();
+    void updatePatientsList();
+
     QQmlListProperty<QObject> patientsList();
     QQmlListProperty<QObject> searchPatientsList();
 
-    Q_INVOKABLE PatientObject* getSpecificItem(const int &index) const;
+    Q_INVOKABLE PatientObject *getSpecificItem(const int &index) const;
 
     Q_INVOKABLE void append(PatientObject *patient);
     Q_INVOKABLE void setSearchListViaSpecificKey(const QString &key);
     Q_INVOKABLE void restartListModel();
     Q_INVOKABLE void sortWithSpecificOrder(const QString &order);
+    Q_INVOKABLE bool contains(const QString &patientName) const;
 
     int currentIndex() const;
     Q_INVOKABLE int size() const;
 
     void setCurrentIndex(int index);
+
+    void clear();
+
+    PatientObject *getCurrentPatient() const;
+
+    QString getScanIdByOrthoticId(const QString &orthoId) const;
+    QString getSiblingScanIdByScan(const QString &scanId) const;
+    QString getSiblingOrthoticByOrthoticId(const QString &orthoId) const;
+
+    void addRxToPatient(const QString &patientId, const Rx &rx);
+    void replaceRxAtPatient(const QString &patientId, const QString &scanId, const Rx &rx);
+    void removeRxFromPatient(const QString &patientId, const QString &rxId);
+    Rx getRxOfPatient(const QString &patientId, const QString &rxId) const;
+    void addScansToPatient(const QString &leftScanId,
+                           const QString &rightScanId,
+                           const QString &patientId,
+                           const QString &docId);//choose patient
+    void removeScanFromPatient(const QString &patientId, const QString &scanId);
+    void newPatientFromScans(const QString &leftScanId,
+                             const QString &rightScanId,
+                             const QString &patientName,
+                             const QString &comments,
+                             const QString &docId);//choose patient
 
 signals:
     void sigPatientsListModificate() const;
@@ -47,6 +72,7 @@ signals:
     void sigSearchListModificate() const;
 
 private:
+    PatientManager *m_PatientManager;
     QList<QObject*> m_PatientsList;
     QList<QObject*> m_SearchPatientsList;
     int m_CurrentIndex;

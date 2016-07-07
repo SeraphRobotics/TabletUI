@@ -16,7 +16,7 @@ PageTemplate {
 
         property string caller: ""
 
-        title: "Please choose a file"
+        title: qstr("Please choose a file")
         onAccepted: {
             console.log("You chose: " + fileDialog.fileUrls)
             if (caller == "Add") {
@@ -33,7 +33,7 @@ PageTemplate {
     NavigationButton {
         id : leftNavigationButton
 
-        buttonText : "back & undo changes"
+        buttonText : qsTr("back & undo changes")
 
         onButtonClicked:  {
             stateManager.setState(stateManager.previousState)
@@ -48,7 +48,7 @@ PageTemplate {
     NavigationButton {
         id : rightNavigationButton
 
-        buttonText : "save & log on"
+        buttonText : qsTr("save & log on")
         onButtonClicked:  {
             stateManager.setState(stateManager.previousState)
             usersListModel.saveUserList()
@@ -66,7 +66,7 @@ PageTemplate {
             top : leftNavigationButton.bottom
             horizontalCenter: parent.horizontalCenter
         }
-        text : "Account Setup"
+        text : qsTr("Account Setup")
     }
 
     GroupBoxTemplate {
@@ -85,12 +85,10 @@ PageTemplate {
             centerIn: parent
         }
 
-        title:   "Prescriber Accounts"
+        title:   qsTr("Prescriber Accounts")
 
-        Rectangle {
+        Item {
             id : headerTextElements
-
-            color : "transparent"
 
             anchors {
                 top : listContainer.header.bottom
@@ -118,7 +116,7 @@ PageTemplate {
                     leftMargin: 220
                     verticalCenter:  parent.verticalCenter
                 }
-                text : "Prescriber Name"
+                text : qsTr("Prescriber Name")
 
             }
             Text {
@@ -137,7 +135,7 @@ PageTemplate {
                     verticalCenter:  parent.verticalCenter
                 }
 
-                text : "Pin Num"
+                text : qsTr("Pin Num")
             }
             Text {
                 id : photoThumbanil
@@ -154,7 +152,7 @@ PageTemplate {
                     leftMargin: 40
                     verticalCenter:  parent.verticalCenter
                 }
-                text : "Photo"
+                text : qsTr("Photo")
             }
         }
 
@@ -242,12 +240,12 @@ PageTemplate {
         width: listContainer.width / 3 * 2
         height: listContainer.height / 1.5
 
-        title: "Confirm Deletion"
+        title: qsTr("Confirm Deletion")
 
         StyledButton {
             id: styledCancel
 
-            titleText: "Cancel"
+            titleText: qsTr("Cancel")
             anchors.bottom: parent.bottom
             anchors.right: parent.right
             anchors.bottomMargin: parent.height / 10
@@ -262,7 +260,7 @@ PageTemplate {
         }
 
         StyledButton {
-            titleText: "Delete"
+            titleText: qsTr("Delete")
             anchors.bottom: parent.bottom
             anchors.left: parent.left
             anchors.bottomMargin: parent.height / 10
@@ -282,7 +280,7 @@ PageTemplate {
 
             color : "black"
 
-            text: "Upon deleting this account, all associated patient files\nwill be transferred to"
+            text: qsTr("Upon deleting this account, all associated patient files\nwill be transferred to")
 
             font {
                 pixelSize: 18

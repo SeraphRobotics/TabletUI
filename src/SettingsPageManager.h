@@ -3,10 +3,6 @@
 
 #include <QObject>
 
-/**
- * @brief The SettingsPageManager class
- * Class to store the states of SettingsPage children items.
- */
 class SettingsPageManager : public QObject
 {
     Q_OBJECT

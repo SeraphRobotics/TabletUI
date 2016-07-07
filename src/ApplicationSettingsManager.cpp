@@ -1,26 +1,28 @@
 #include "ApplicationSettingsManager.h"
 
-#include "QSettings"
-#include <QtGui/QGuiApplication>
+#include <QSettings>
+#include <QGuiApplication>
 #include <QDebug>
-#include <QDir>
 #include <QFile>
 
+/*!
+ * \class ApplicationSettingsManager
+ * \brief Class to store all application data, settings, file paths
+ */
 
 ApplicationSettingsManager::ApplicationSettingsManager(QObject *parent) :
     QObject(parent)
-
 {
 #ifdef Q_OS_WIN
     m_ApplicationIniFilePath = static_cast<QString>
-            (getenv("APPDATA"))+"/Seraph/SeraphData.ini";
+            (getenv("APPDATA")) + "/Seraph/SeraphData.ini";
 #endif
 
 #ifdef Q_OS_LINUX
-    m_ApplicationIniFilePath = qApp->applicationDirPath()+"/settings.ini";
+    m_ApplicationIniFilePath = qApp->applicationDirPath() + "/settings.ini";
 #endif
 
-    if(QFile::exists(m_ApplicationIniFilePath))
+    if (QFile::exists(m_ApplicationIniFilePath))
     {
         _readSettingsFile();
     }
@@ -30,22 +32,27 @@ ApplicationSettingsManager::ApplicationSettingsManager(QObject *parent) :
     }
 }
 
+ApplicationSettingsManager::~ApplicationSettingsManager()
+{
+}
+
 ApplicationSettingsManager& ApplicationSettingsManager::getInstance()
 {
     static ApplicationSettingsManager instance;
     return instance;
 }
 
+/*!
+ * \brief Perform settings file creation
+ */
 void ApplicationSettingsManager::_createSettingsFile()
 {
-    qDebug()<<QString("Not found settings file in %1, create now").
-              arg(m_ApplicationIniFilePath);
+    qDebug() << QString("Not found settings file in %1, create now")
+                .arg(m_ApplicationIniFilePath);
 
     QSettings settings(m_ApplicationIniFilePath, QSettings::IniFormat);
     settings.setValue("scan-extension", "scan");
     settings.setValue("ortho-extension", "ortho");
-    settings.setValue("ortho-directory",qApp->applicationDirPath());
-
     settings.setValue("patient-file",
                       qApp->applicationDirPath().append("/patients.xml"));
     settings.setValue("users-file",
@@ -55,35 +62,50 @@ void ApplicationSettingsManager::_createSettingsFile()
     _readSettingsFile();
 }
 
+/*!
+ * \brief Read data from settings file
+ */
 void ApplicationSettingsManager::_readSettingsFile()
 {
     QSettings settings(m_ApplicationIniFilePath, QSettings::IniFormat);
 
-    m_PatientsFilePathName = settings.value("patient-file").toString();
-    m_UsersFilePathName = settings.value("users-file").toString();
-    m_ScanFilePathName = settings.value("scan-file").toString();
+    m_PatientsFilePath = settings.value("patient-file").toString();
+    m_UsersFilePath = settings.value("users-file").toString();
+    m_ScanFilePath = settings.value("scan-file").toString();
     m_OrderMaterialsUrl = settings.value("orderMaterialsUrl").toString();
     m_ContactSupportUrl = settings.value("contactSupportUrl").toString();
     m_PinRequire = settings.value("pinRequire").toBool();
     m_AutoAssignPatients = settings.value("autoAssignPatients").toBool();
     m_LoginByPrescriber = settings.value("loginByPrescriber").toBool();
+    m_Slic3rBinPath = settings.value("slic3r_bin_path").toString();
 }
 
-const QString& ApplicationSettingsManager::usersFilePathName() const
+/*!
+ * \brief Return users file path
+ * \return
+ */
+const QString& ApplicationSettingsManager::usersFilePath() const
 {
-    return m_UsersFilePathName;
+    return m_UsersFilePath;
 }
 
-const QString& ApplicationSettingsManager::patientsFilePathName() const
+/*!
+ * \brief Return patients file path
+ * \return
+ */
+const QString& ApplicationSettingsManager::patientsFilePath() const
 {
-    return m_PatientsFilePathName;
+    return m_PatientsFilePath;
 }
 
+/*!
+ * \brief Set starting state
+ */
 void ApplicationSettingsManager::setStartingState() const
 {
-    QSettings settings(m_ApplicationIniFilePath,QSettings::IniFormat);
+    QSettings settings(m_ApplicationIniFilePath, QSettings::IniFormat);
 
-    if(settings.value("first-run").isNull() == true)
+    if (settings.value("first-run").isNull() == true)
     {
         settings.setValue("first-run",false);
         emit setStateOnApplicationStart("welcomeScreenState");
@@ -94,26 +116,44 @@ void ApplicationSettingsManager::setStartingState() const
     }
 }
 
+/*!
+ * \brief Return order materials url
+ * \return
+ */
 const QString ApplicationSettingsManager::orderMaterialsUrl() const
 {
     return m_OrderMaterialsUrl;
 }
 
+/*!
+ * \brief Return contact support url
+ * \return
+ */
 const QString ApplicationSettingsManager::contactSupportUrl() const
 {
     return m_ContactSupportUrl;
 }
 
-const QString ApplicationSettingsManager::scanFilePathName() const
+/*!
+ * \brief Return scan file path
+ * \return
+ */
+const QString ApplicationSettingsManager::scanFilePath() const
 {
-    return m_ScanFilePathName;
+    return m_ScanFilePath;
 }
 
+/*!
+ * \brief Save account settings to *.ini file
+ * \param pinRequire
+ * \param loginByPrescriber
+ * \param autoAssignPatients
+ */
 void ApplicationSettingsManager::saveAccountSettingsToIniFile(const bool& pinRequire,
                                                               const bool& loginByPrescriber,
                                                               const bool& autoAssignPatients)
 {
-    QSettings settings(m_ApplicationIniFilePath,QSettings::IniFormat);
+    QSettings settings(m_ApplicationIniFilePath, QSettings::IniFormat);
 
     settings.setValue("pinRequire",pinRequire);
     settings.setValue("loginByPrescriber", loginByPrescriber);
@@ -124,47 +164,77 @@ void ApplicationSettingsManager::saveAccountSettingsToIniFile(const bool& pinReq
     setPinRequire(pinRequire);
 }
 
+/*!
+ * \brief Return whether app should auto assign patients
+ * \return
+ */
 bool ApplicationSettingsManager::autoAssignPatients() const
 {
-    qDebug()<<__FUNCTION__<<m_AutoAssignPatients;
     return m_AutoAssignPatients;
 }
 
+/*!
+ * \brief Return whether app should login by prescriber
+ * \return
+ */
 bool ApplicationSettingsManager::loginByPrescriber() const
 {
-    qDebug()<<__FUNCTION__<<m_LoginByPrescriber;
     return m_LoginByPrescriber;
 }
 
+/*!
+ * \brief Return whether pin is required
+ * \return
+ */
 bool ApplicationSettingsManager::pinRequire() const
 {
-    qDebug()<<__FUNCTION__<<m_PinRequire;
     return m_PinRequire;
 }
 
+/*!
+ * \brief Set whether app should auto assign patients
+ * \param autoAssign
+ */
 void ApplicationSettingsManager::setAutoAssignPatients(const bool& autoAssign)
 {
-    if(m_AutoAssignPatients != autoAssign)
+    if (m_AutoAssignPatients != autoAssign)
     {
         m_AutoAssignPatients = autoAssign;
         emit sigAutoAssignPatientsChanged();
     }
 }
 
+/*!
+ * \brief Set whether app should login by prescriber
+ * \param loginByPrescriber
+ */
 void ApplicationSettingsManager::setLoginByPrescriber(const bool& loginByPrescriber)
 {
-    if(m_LoginByPrescriber != loginByPrescriber)
+    if (m_LoginByPrescriber != loginByPrescriber)
     {
         m_LoginByPrescriber = loginByPrescriber;
         emit sigLoginByPrescriberChanged();
     }
 }
 
+/*!
+ * \brief Set whether pin is required
+ * \param pinRequire
+ */
 void ApplicationSettingsManager::setPinRequire(const bool& pinRequire)
 {
-    if(m_PinRequire != pinRequire)
+    if (m_PinRequire != pinRequire)
     {
         m_PinRequire = pinRequire;
         emit sigPinRequireChanged();
     }
+}
+
+/*!
+ * \brief Return full path to Slic3r bin folder
+ * \return
+ */
+QString ApplicationSettingsManager::slic3rBinPath() const
+{
+    return m_Slic3rBinPath;
 }

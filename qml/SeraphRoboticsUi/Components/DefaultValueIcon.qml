@@ -1,11 +1,10 @@
 import QtQuick 2.0
 
-Rectangle {
+Item {
     id : defaultValueIcon
 
     width : 60
     height : 20
-    color : "transparent"
 
     Image {
         id : icon
@@ -20,7 +19,7 @@ Rectangle {
     }
 
     GrayDescriptionText {
-        text : "default"
+        text : qsTr("default")
 
         font.pixelSize: 13
 

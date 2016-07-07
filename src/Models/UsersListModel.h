@@ -6,11 +6,11 @@
 #include <QDebug>
 #include <QString>
 
-#include "UserObject.h"
+#include "user.h"
 
-/**
- * @brief The UsersListModel class
- */
+class UserObject;
+class UserDataManager;
+
 class UsersListModel : public QObject
 {
     Q_OBJECT
@@ -24,6 +24,8 @@ public:
                NOTIFY sigCurrentIndexChanged)
 
     Q_INVOKABLE void removeLast();
+
+    QList<User> getUsersList() const; //start
 
     Q_INVOKABLE void appendNewUser(UserObject *user);
     Q_INVOKABLE void appendNewUser(const QString &firstName,
@@ -42,7 +44,7 @@ public:
                                 const QString &password,
                                 const QString &iconPath,
                                 const QString &degree);
-    Q_INVOKABLE UserObject* getSpecificItem(const int &index) const;
+    Q_INVOKABLE UserObject *getSpecificItem(const int &index) const;
     Q_INVOKABLE bool checkIfValueExist(const QString &value,
                                        const QString &valueName);
     Q_INVOKABLE void removeAt(int i);
@@ -60,10 +62,10 @@ public:
 signals:
     void sigUsersListModificate() const;
     void sigUsersListReset(); //Undo
-    void sigSaveUserList(QList<QObject*> *usersList) const; //Save
     void sigCurrentIndexChanged() const;
 
 private:
+    UserDataManager *m_UserDataManager;
     QList<QObject*> m_UsersList;
 
     /// @note m_CurrentIndex is used for storing current user list index.
@@ -71,4 +73,5 @@ private:
     int m_CurrentIndex;
 };
 Q_DECLARE_METATYPE(UsersListModel*)
+
 #endif // USERSLISTMODEL_H

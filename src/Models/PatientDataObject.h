@@ -5,13 +5,7 @@
 #include <QDateTime>
 #include <QString>
 
-#include "NameObject.h"
-
-/**
- * @brief The PatientDataObject class 
- * Class used to keep minimal patient data.
- * Used to connect patient with Rx and Scan
- */
+class NameObject;
 
 class PatientDataObject : public QObject
 {
@@ -20,9 +14,13 @@ class PatientDataObject : public QObject
     Q_PROPERTY(QString id READ id NOTIFY sigIdChanged)
     Q_PROPERTY(QDateTime dateTime READ dateTime NOTIFY sigDateTimeChanged)
     Q_PROPERTY(QString comment READ comment NOTIFY sigCommentChanged)
+    Q_PROPERTY(int foot READ foot WRITE setFoot)
     
 public:
     explicit PatientDataObject(QObject *parent = 0);
+
+    int foot() const;
+    void setFoot(int foot);
 
 signals:
     void sigIdChanged() const;
@@ -31,10 +29,10 @@ signals:
     void sigPatientNameChanged() const;
 
 public slots:
-    QDateTime  dateTime() const;
+    QDateTime dateTime() const;
     QString id() const;
     QString comment() const;
-    NameObject* patientName() const;
+    NameObject *patientName() const;
 
     void setDataTime(const QDateTime &dateTime);
     void setId(const QString &id);
@@ -45,7 +43,8 @@ private:
     QDateTime m_DateTime;
     QString m_Id;
     QString m_Comment; /*! Value used to store the doctor's comments about the patient. !*/
-    NameObject* m_PatientName;
+    NameObject *m_PatientName;
+    int m_Foot;
 };
 
 #endif // PATIENTDATAOBJECT_H

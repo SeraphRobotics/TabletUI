@@ -1,4 +1,5 @@
 import QtQuick 2.4
+
 import ".."
 import "../Components"
 import "ChoosePatientScreenPrivateComponents"
@@ -12,15 +13,6 @@ ChoosePatientScreenMainWindow {
         id : patientsList
     }
 
-    //Timer used to simulate usb being plugged/unplugged
-    Timer {
-        interval: 60000; running: true; repeat: true
-        onTriggered: {
-            manageUsbDrive.state = (manageUsbDrive.state == "usbNotDetected")
-                    ? "usbDetected" : "usbNotDetected"
-        }
-    }
-
     GroupBoxTemplate {
         id : manageUsbDrive
 
@@ -28,8 +20,8 @@ ChoosePatientScreenMainWindow {
 
         width : widthScaleValue*parent.width
 
-        title: "Manage USB Drive"
-        state : "usbDetected"
+        title: qsTr("Manage USB Drive")
+        state : qmlCppWrapper.usbDetected ? "usbDetected" : "usbNotDetected"
 
         anchors {
             top : parent.top
@@ -80,4 +72,15 @@ ChoosePatientScreenMainWindow {
         stateManager.setState("patientHistoryScreen")
     }
 
+    Connections {
+        target: qmlCppWrapper
+
+        onUsbConnected: {
+            manageUsbDrive.state = "usbDetected"
+        }
+
+        onUsbDisconnected: {
+            manageUsbDrive.state = "usbNotDetected"
+        }
+    }
 }

@@ -21,8 +21,8 @@ Rectangle {
             centerIn: parent
         }
 
-        text : "<p align=\"center\">In the future, you can adjust these settings<br/>
-by clicking the “SR” icon below.<br/></p>"
+        text : qsTr("<p align=\"center\">In the future, you can adjust these settings<br/>
+by clicking the “SR” icon below.<br/></p>")
     }
 
 
@@ -35,9 +35,9 @@ by clicking the “SR” icon below.<br/></p>"
             horizontalCenter:  infoText.horizontalCenter
         }
 
-        text : "<p align=\"center\"
+        text : qsTr("<p align=\"center\"
 </br>Click the “SR” icon now to review and save<br/>
-your settings and continue.</p>"
+your settings and continue.</p>")
     }
 
     BlueArrowComponent {

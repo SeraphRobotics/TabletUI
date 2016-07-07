@@ -11,7 +11,7 @@ import "../../"
 Rectangle {
     id: imageBorder
 
-    border.color: "white"
+    border.color: "#4c4c4c"
     border.width:  frameElementsVisible === true ? 2 : 0
 
     color : "transparent"
@@ -23,11 +23,14 @@ Rectangle {
 
     property string direction: "" /// left or right.
     property string m_Name: "" // pad name.
+    property int m_Type: 0 // pad type.
     property int m_Height: 9  // Height value for specific pad.
     property int m_Depth: 9 // Depth value for specific pad.
-    property int m_HeightDepthXL:80 // Left triangle x coordinate on Slider.
-    property int m_HeightDepthXR:144 // Right triangle x coordinate on Slider.
     property int m_Stiffness: 50 // Stiffness value for specific pad.
+    property var m_OuterLoop: [Qt.point(0, 0),Qt.point(0, 10),Qt.point(10, 10),Qt.point(10, 0)]
+    property var m_InnerLoops: [
+        [Qt.point(3, 3),Qt.point(3, 7),Qt.point(7, 7),Qt.point(7, 3)]
+    ]
 
     property alias source: exampleImage.source
     property alias elementScale: scale
@@ -59,8 +62,7 @@ Rectangle {
 
     // Current pad should be always on top.
     z : SettingsPageComponentsSettings.currentDraggablePad === imageBorder ?
-            99
-          : 0
+            99 : 0
 
     // Recalculate frame size.
     function boxSize()
@@ -74,8 +76,8 @@ Rectangle {
         var heightRect = Math.sin(radians) * exampleImage.width
                 + Math.cos(radians) * exampleImage.height
 
-        imageBorder.width =  Math.abs(widthRect) + handleSize*elementScale.xScale
-        imageBorder.height =  Math.abs(heightRect) + handleSize*elementScale.yScale
+        imageBorder.width = Math.abs(widthRect) + handleSize*elementScale.xScale
+        imageBorder.height = Math.abs(heightRect) + handleSize*elementScale.yScale
     }
 
     // Function used to center image after resizing the frame.
@@ -198,12 +200,57 @@ Rectangle {
         anchors.centerIn: parent
     }
 
+    function calculateYScale()
+    {
+        var view3d, canvasSize
+        if (imageBorder.direction == "left" ) {
+            view3d = SettingsPageComponentsSettings.m_LeftSideComponent.view3dRect;
+            canvasSize = SettingsPageComponentsSettings.leftCanvasSize;
+        } else {
+            view3d = SettingsPageComponentsSettings.m_RightSideComponent.view3dRect;
+            canvasSize = SettingsPageComponentsSettings.rightCanvasSize;
+        }
+
+        if (view3d === null)
+            return 1;
+
+        if (view3d.height === 0)
+            return 1;
+
+        if (canvasSize.height === -1)
+            return 1;
+
+        return view3d.height / canvasSize.height
+    }
+
+    function calculateXScale()
+    {
+        var view3d, canvasSize
+        if (imageBorder.direction == "left" ) {
+            view3d = SettingsPageComponentsSettings.m_LeftSideComponent.view3dRect;
+            canvasSize = SettingsPageComponentsSettings.leftCanvasSize;
+        } else {
+            view3d = SettingsPageComponentsSettings.m_RightSideComponent.view3dRect;
+            canvasSize = SettingsPageComponentsSettings.rightCanvasSize;
+        }
+
+        if (view3d === null)
+            return 1;
+
+        if (view3d.width === 0)
+            return 1;
+
+        if (canvasSize.width === -1)
+            return 1;
+
+        return view3d.width / canvasSize.width
+    }
+
     // Scale component for recalculating basic values. If foot gets resized, the component sets proper size and position.
     Scale {
         id: scale
 
-        yScale: SettingsPageComponentsSettings.m_CurrentSelectedArea.view3d
-        .height/SettingsPageComponentsSettings.startingSideElementHeight
+        yScale: calculateYScale()
 
         onYScaleChanged:
         {
@@ -213,8 +260,7 @@ Rectangle {
             boxSize()
         }
 
-        xScale: SettingsPageComponentsSettings.m_CurrentSelectedArea.view3d
-        .width/SettingsPageComponentsSettings.startingSideElementWidth
+        xScale: calculateXScale()
 
         onXScaleChanged:
         {
@@ -234,14 +280,8 @@ Rectangle {
     }
 
     // Invisible bounding box used to detect if item is inside or outside foot element.
-    Rectangle {
+    Item {
         id: boundingRect
-
-        color: "transparent"
-        border {
-            color: "transparent"
-            width: 2
-        }
         anchors.centerIn: exampleImage
 
         parent : imageBorder.parent
@@ -254,18 +294,16 @@ Rectangle {
     // Pad element
     Image {
         id: exampleImage
-
         anchors.centerIn: parent
 
         // Item used for checking image position after rotation.
-        Rectangle {
+        Item {
             id: originPoint
 
             width: 25
             height: 25
             x: 0
             y: 0
-            color: "transparent"
         }
 
         // Recalculates size and position when the pad is created.
@@ -340,10 +378,7 @@ Rectangle {
 
         objectName : "draggableElement"
 
-        anchors
-        {
-            fill : parent
-        }
+        anchors.fill: parent
 
         drag.target: parent
         cursorShape: Qt.OpenHandCursor
@@ -446,8 +481,8 @@ Rectangle {
 
         z : descriptionConnectionElement.z+1
 
-        text :  "<p align=\"left\">"+m_Name+"<br/>"+"height/depth<br/>△ "+(m_Height+m_Depth)+"mm<br/>"
-                +"stiffness<br/>"+m_Stiffness+"PSI</p>"
+        text :  qsTr("<p align=\"left\">")+m_Name+qsTr("<br/>")+qsTr("height/depth<br/>△ ")+(m_Height+m_Depth)+qsTr("mm<br/>")
+                +qsTr("stiffness<br/>")+m_Stiffness+qsTr("PSI</p>")
 
         font.pixelSize: 15
     }

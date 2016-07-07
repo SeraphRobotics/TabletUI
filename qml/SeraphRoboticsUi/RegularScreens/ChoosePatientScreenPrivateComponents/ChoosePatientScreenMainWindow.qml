@@ -10,12 +10,10 @@ PageTemplate {
     property alias leftNavigationButton: firstButton
     property alias rightNavigationButton : secondButton
 
-    Rectangle {
+    Item {
         id : topNavigationPanel
 
         height : 30
-
-        color : "transparent"
 
         anchors {
             left : parent.left
@@ -35,7 +33,7 @@ PageTemplate {
 
             color : "#f15a24"
 
-            text : "Hello "+usersListModel.getSpecificItem(usersListModel.currentIndex).name.title+" "
+            text : qsTr("Hello ")+usersListModel.getSpecificItem(usersListModel.currentIndex).name.title+" "
                    +usersListModel.getSpecificItem(usersListModel.currentIndex).name.firstName+" "
                    +usersListModel.getSpecificItem(usersListModel.currentIndex).name.lastName
         }
@@ -49,7 +47,7 @@ PageTemplate {
 
             buttonInformationText.font.pixelSize: 25
 
-            buttonText: "step 1: choose patient"
+            buttonText: qsTr("step 1: choose patient")
 
             Component.onCompleted: {
                 leftOrRightButton("center")
@@ -67,7 +65,7 @@ PageTemplate {
                 top : parent.top
             }
 
-            buttonText: "2: patient history"
+            buttonText: qsTr("2: patient history")
 
             Component.onCompleted: {
                 leftOrRightButton("right")

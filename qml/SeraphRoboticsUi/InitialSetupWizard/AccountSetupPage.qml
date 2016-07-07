@@ -13,7 +13,7 @@ PageTemplate {
     {
         id : leftNavigationButton
 
-        buttonText : "back & undo changes"
+        buttonText : qsTr("back & undo changes")
 
         onButtonClicked:  {
             stateManager.setState("customerNumberPageState")
@@ -26,7 +26,7 @@ PageTemplate {
     NavigationButton {
         id : rightNavigationButton
 
-        buttonText : "save & log on"
+        buttonText : qsTr("save & log on")
         onButtonClicked:  {
             stateManager.setState("editaccountSettingsPage")
         }
@@ -43,7 +43,7 @@ PageTemplate {
             horizontalCenter: parent.horizontalCenter
         }
 
-        text : "Account Setup"
+        text : qsTr("Account Setup")
     }
 
     BlueArrowComponent {
@@ -67,10 +67,10 @@ PageTemplate {
             horizontalCenter: parent.horizontalCenter
         }
 
-        text : "<p align=\"center\">You can create an account for yourself and/or<br/>
+        text : qsTr("<p align=\"center\">You can create an account for yourself and/or<br/>
 other prescribers using this machine, or<br/>
 simply login as the Default user by clicking<br/>
-“save & log on” without adding a new account.</p>"
+“save & log on” without adding a new account.</p>")
     }
 
     BlackDescriptionText {
@@ -83,9 +83,9 @@ simply login as the Default user by clicking<br/>
             horizontalCenter: parent.horizontalCenter
         }
 
-        text : "<p align=\"center\"><br/><br/>
+        text : qsTr("<p align=\"center\"><br/><br/>
 Accounts allow you to keep track of your<br/>
-patients and personalize the software to you.</p>"
+patients and personalize the software to you.</p>")
     }
 
 
@@ -106,7 +106,7 @@ patients and personalize the software to you.</p>"
         id : switchUser
 
         width : 200
-        titleText : "switch user"
+        titleText : qsTr("switch user")
 
         opacity : (stateManager.previousState === "editaccountSetupPage")
 
@@ -140,7 +140,7 @@ patients and personalize the software to you.</p>"
         opacity : (stateManager.previousState === "editaccountSetupPage")
 
         width : 210
-        titleText : "edit accounts"
+        titleText : qsTr("edit accounts")
 
         anchors {
             horizontalCenter: prescriberAccounts.horizontalCenter

@@ -1,29 +1,39 @@
-# Add more folders to ship with the application, here
-folder_01.source = qml/SeraphRoboticsUi
-folder_01.target = qml
-DEPLOYMENTFOLDERS = folder_01
+# MILOSOLUTIONS @ 2016
+# Project: SeraphRobotics
+#
+# List of environment viariables that must be set:
+#   opencv_inc   - path to headers for OpenCV library
+#   opencv_lib   - path to OpenCV libraries ver 2.4
+#   backend_lib  - SR backend static libary path
+#
+# Optional variables:
+#   USE_FAKE_SCANNER - instead of real scanner device use virtual dummy object (test only)
+#   USE_EXISTING_STL - don't calculate any stl file, use those existing in directory (test only)
 
-# Additional import path used to resolve QML modules in Creator's code model
-QML_IMPORT_PATH =
+TEMPLATE = app
+QT += xml quick qml core serialport
+# For Qt3D
+QT += 3dcore 3dquick 3drenderer 3dinput
 
-QT += xml 3dquick core
+CONFIG += c++11
 
-QMAKE_CXXFLAGS += -std=c++11
-
-
-INCLUDEPATH +=  src/ \
-                src/XmlManager/
-
-INCLUDEPATH += ../seraphLibs/
-#INCLUDEPATH += /usr/include/opencv
-#INCLUDEPATH += /usr/include/opencv2
-
-LIBS += -L../build-seraphLibs/
-LIBS += -lseraphLibs
+include(conf.pri)
 
 # The .cpp file which was generated for your project. Feel free to hack it.
 SOURCES += main.cpp \
     src/QmlPageStateManager.cpp \
+    ../SeraphRoboticsBackend/DataStructures/basicstructures.cpp \
+    ../SeraphRoboticsBackend/DataStructures/manipulations.cpp \
+    ../SeraphRoboticsBackend/DataStructures/orthotic.cpp \
+    ../SeraphRoboticsBackend/DataStructures/orthoticmanager.cpp \
+    ../SeraphRoboticsBackend/DataStructures/patientdata.cpp \
+    ../SeraphRoboticsBackend/DataStructures/patientmanager.cpp \
+    ../SeraphRoboticsBackend/DataStructures/scan.cpp \
+    ../SeraphRoboticsBackend/DataStructures/scanmanager.cpp \
+    ../SeraphRoboticsBackend/DataStructures/test.cpp \
+    ../SeraphRoboticsBackend/DataStructures/user.cpp \
+    ../SeraphRoboticsBackend/DataStructures/usermanager.cpp \
+    ../SeraphRoboticsBackend/DataStructures/xygrid.cpp \
     src/QmlCppWrapper.cpp \
     src/Models/UserObject.cpp \
     src/Models/PatientObject.cpp \
@@ -33,17 +43,38 @@ SOURCES += main.cpp \
     src/ApplicationSettingsManager.cpp \
     src/Models/PatientDataObject.cpp \
     src/SettingsPageManager.cpp \
-    src/XmlManager/XmlFileManager.cpp \
-    src/3dHelper/q3dhelper.cpp \
-    src/ImageProcessingClass/ImageContoursDetector.cpp
+    src/ImageProvider.cpp \
+    applicationview.cpp \
+    src/Workers/ModelGeneratorWorker.cpp \
+    src/FileLocationHelper.cpp \
+    src/fakescannercontroller.cpp \
+    src/ManipulationData.cpp \
+    src/modelcoordinates.cpp \
+    src/Models/Foot.cpp \
+    src/Models/ControlPoints.cpp \
+    src/Models/UsbDataModel.cpp \
+    src/Workers/TransferRxWorker.cpp \
+    src/Workers/GcodeGeneratorWorker.cpp \
+    logger.cpp
 
-
-# Please do not modify the following two lines. Required for deployment.
-include(qtquick2applicationviewer/qtquick2applicationviewer.pri)
-qtcAddDeployment()
+INCLUDEPATH += ../SeraphRoboticsBackend \
+               ../SeraphRoboticsBackend/DataStructures/ \
+                src/
 
 HEADERS += \
     src/QmlPageStateManager.h \
+    ../SeraphRoboticsBackend/DataStructures/basicstructures.h \
+    ../SeraphRoboticsBackend/DataStructures/manipulations.h \
+    ../SeraphRoboticsBackend/DataStructures/orthotic.h \
+    ../SeraphRoboticsBackend/DataStructures/orthoticmanager.h \
+    ../SeraphRoboticsBackend/DataStructures/patientdata.h \
+    ../SeraphRoboticsBackend/DataStructures/patientmanager.h \
+    ../SeraphRoboticsBackend/DataStructures/scan.h \
+    ../SeraphRoboticsBackend/DataStructures/scanmanager.h \
+    ../SeraphRoboticsBackend/DataStructures/test.h \
+    ../SeraphRoboticsBackend/DataStructures/user.h \
+    ../SeraphRoboticsBackend/DataStructures/usermanager.h \
+    ../SeraphRoboticsBackend/DataStructures/xygrid.h \
     src/QmlCppWrapper.h \
     src/Models/UserObject.h \
     src/Models/PatientObject.h \
@@ -53,12 +84,25 @@ HEADERS += \
     src/ApplicationSettingsManager.h \
     src/Models/PatientDataObject.h \
     src/SettingsPageManager.h \
-    src/XmlManager/XmlFileManager.h \
-    src/3dHelper/q3dhelper.h \
-    src/ImageProcessingClass/ImageContoursDetector.h
+    src/ImageProvider.h \
+    applicationview.h \
+    src/Workers/ModelGeneratorWorker.h \
+    src/FileLocationHelper.h \
+    src/fakescannercontroller.h \
+    src/ManipulationData.h \
+    src/modelcoordinates.h \
+    src/Models/Foot.h \
+    src/Models/ControlPoints.h \
+    src/Models/UsbDataModel.h \
+    src/Workers/TransferRxWorker.h \
+    src/Workers/GcodeGeneratorWorker.h \
+    logger.h
+
 
 RESOURCES += \
-    resourcesFile.qrc
+    resourcesFile.qrc \
+    qml.qrc
+
 
 ##This part is for building exe with administrator acess, use only for build exe for user.
 
@@ -68,23 +112,3 @@ RESOURCES += \
 #}
 
 win32:RC_FILE = SeraphRoboticsUi.rc
-win32:CONFIG(release, debug|release): LIBS +=-L$$PWD/../../../../opencv/build/x86/vc12/lib/ -lopencv_core249
-else:win32:CONFIG(debug, debug|release): LIBS +=-L$$PWD/../../../../opencv/build/x86/vc12/lib/ -lopencv_core249d
-unix:LIBS += -lopencv_core
-
-win32:INCLUDEPATH += $$PWD/../../../../opencv/build/include
-win32:DEPENDPATH += $$PWD/../../../../opencv/build/include
-
-win32:CONFIG(release, debug|release): LIBS +=-L$$PWD/../../../../opencv/build/x86/vc12/lib/ -lopencv_imgproc249
-else:win32:CONFIG(debug, debug|release): LIBS +=-L$$PWD/../../../../opencv/build/x86/vc12/lib/ -lopencv_imgproc249d
-unix:LIBS += -lopencv_imgproc
-
-win32:INCLUDEPATH += $$PWD/../../../../opencv/build/include
-win32:DEPENDPATH += $$PWD/../../../../opencv/build/include
-
-win32:CONFIG(release, debug|release): LIBS +=-L$$PWD/../../../../opencv/build/x86/vc12/lib/ -lopencv_highgui249
-else:win32:CONFIG(debug, debug|release): LIBS +=-L$$PWD/../../../../opencv/build/x86/vc12/lib/ -lopencv_highgui249d
-unix:LIBS += -lopencv_highgui
-
-win32:INCLUDEPATH += $$PWD/../../../../opencv/build/include
-win32:DEPENDPATH += $$PWD/../../../../opencv/build/include

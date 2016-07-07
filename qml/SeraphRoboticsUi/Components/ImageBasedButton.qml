@@ -20,7 +20,6 @@ Image {
         cursorShape : Qt.PointingHandCursor
 
         onClicked:{
-            console.log("Styled button clicked.")
             customClicked()
         }
         onPressed: {

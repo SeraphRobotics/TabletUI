@@ -22,7 +22,7 @@ Rectangle {
         id : textElement
 
         font.pixelSize: 22
-        text : "left"
+        text : qsTr("left")
         anchors {
             centerIn: parent
         }

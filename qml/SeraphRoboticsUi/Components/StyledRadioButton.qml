@@ -3,11 +3,9 @@ import QtQuick.Controls 1.2
 import QtQuick.Controls.Styles 1.2
 import QtGraphicalEffects 1.0
 
-Rectangle {
+Item {
     width: 200
     height: 25
-
-    color : "transparent"
 
     property alias descriptionText: radioButton.text
     property alias checked : radioButton.checked

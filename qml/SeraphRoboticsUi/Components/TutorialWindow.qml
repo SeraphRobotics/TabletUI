@@ -33,7 +33,7 @@ Item {
         height: 360
 
         enabled: opacity === 1 ? true : false
-        title: "Tutorial"
+        title: qsTr("Tutorial")
         opacity: background.opacity
 
         z : 99
@@ -45,7 +45,7 @@ Item {
                 verticalCenter: tutorialWindow.header.verticalCenter
                 verticalCenterOffset: -5
             }
-            text: "X"
+            text: qsTr("X")
             color: "white"
             font.pixelSize: tutorialWindow.headerTextFontPixelSize + 2
             font.bold: true

@@ -5,13 +5,12 @@ import QtQuick.Controls.Styles 1.2
 import "../../Components"
 import ".."
 
-Rectangle {   
+Item {
     property bool checked: radioButt.checked
     property int checkInd: 0
 
     width: parent.width
     height: 50
-    color : "transparent"
 
     signal showFileDialog()
 

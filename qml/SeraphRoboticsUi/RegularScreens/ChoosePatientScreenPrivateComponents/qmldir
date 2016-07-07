@@ -1,1 +1,3 @@
 singleton GrayPopup 1.0 RegularScreenPopup.qml
+singleton ScannerPopup 1.0 ScannerPopup.qml
+singleton AddScanToPatientPopup 1.0 AddScanToPatientPopup.qml

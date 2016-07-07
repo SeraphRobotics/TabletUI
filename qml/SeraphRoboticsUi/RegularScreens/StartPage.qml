@@ -68,7 +68,7 @@ PageTemplate {
             visible : true
 
             welcomeTextColor:   "#e6e6e6"
-            placeholderText: "enter pin"
+            placeholderText: qsTr("enter pin")
 
             style : textPinInput.styleNormalInput
 
@@ -90,6 +90,7 @@ PageTemplate {
                     usersListModel.currentIndex = listUsers.listView.currentIndex
                     startScreen.state = "buttonShowing"
                     stateManager.setState("choosePatientState")
+                    qmlCppWrapper.initScanner()
                 }
                 // Wrong password.
                 else

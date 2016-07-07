@@ -61,5 +61,6 @@
         <file>QmlResources/triangle.svg</file>
         <file>QmlResources/square.svg</file>
         <file>exampleImages/tri-square.svg</file>
+        <file>QmlResources/loader.svg</file>
     </qresource>
 </RCC>

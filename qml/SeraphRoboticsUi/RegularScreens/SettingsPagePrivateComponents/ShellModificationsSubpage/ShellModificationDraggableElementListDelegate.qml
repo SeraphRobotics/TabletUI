@@ -4,13 +4,11 @@ import "../../../Components"
 import "../SettingsPageComponents/DraggableElementComponents"
 import "../" 1.0
 
-Rectangle {
-    id : _delegate
+Item {
+    id : delegate
 
     width : widthElement.width/3
     height : 170/540*draggableList.height
-
-    color : "transparent"
 
     property Item widthElement :  null
     property Item draggableList :  null
@@ -100,10 +98,10 @@ Rectangle {
 
             visible : name === "Create Custom Pad" ? false : true
 
-            width : m_Width !== -1 ? 90*_delegate.width/187:
-                                     sourceSize.width*_delegate.width/187
-            height :m_Height !== -1 ? 90*_delegate.height/170:
-                                      sourceSize.height*_delegate.height/170
+            width : m_Width !== -1 ? 90*delegate.width/187:
+                                     sourceSize.width*delegate.width/187
+            height :m_Height !== -1 ? 90*delegate.height/170:
+                                      sourceSize.height*delegate.height/170
 
         }
         MouseArea {
@@ -153,7 +151,7 @@ Rectangle {
 
                 startMove = true
                 // Create selected pad.
-                SettingsPageComponentsSettings.createObject(svgItem, name, "oneClicked",
+                SettingsPageComponentsSettings.createObject(svgItem, name, type, "oneClicked",
                                                             undefined,
                                                             undefined,
                                                             undefined,
@@ -177,7 +175,7 @@ Rectangle {
                 // Create selected pad.
                 if(name !== "Create Custom Pad")
                 {
-                    SettingsPageComponentsSettings.createObject(svgItem, name, "doubleClicked",
+                    SettingsPageComponentsSettings.createObject(svgItem, name, type, "doubleClicked",
                                                                 undefined,
                                                                 undefined,
                                                                 undefined,

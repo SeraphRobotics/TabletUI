@@ -41,17 +41,17 @@ PageTemplate {
         anchors.centerIn: parent
 
         text :
-            "Welcome to Seraph Robotics’ Orthotics Software!"
+            qsTr("Welcome to Seraph Robotics’ Orthotics Software!")
 
     }
     BlackDescriptionText {
         id : detailedText
 
         opacity : 0
-        text : "<p align=\"center\">The next few screens will allow us to tailor the<br/>
+        text : qsTr("<p align=\"center\">The next few screens will allow us to tailor the<br/>
                      software to your needs and show you how easy<br/>
                     it is to create the world’s most advanced<br/>
-                     robotic orthotics for your patients.</p>";
+                     robotic orthotics for your patients.</p>");
 
         anchors {
             top : welcomeText.bottom

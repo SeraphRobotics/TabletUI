@@ -1,11 +1,14 @@
 #include "PatientDataObject.h"
 
-#include <QDebug>
+/*!
+ * \class PatientDataObject
+ * \brief Class used to keep minimal patient data.
+ * Used to connect patient with Rx and Scan
+ */
 
 PatientDataObject::PatientDataObject(QObject *parent) :
     QObject(parent)
 {
-
 }
 
 QDateTime PatientDataObject::dateTime() const
@@ -59,5 +62,15 @@ void PatientDataObject::setPatientName(NameObject *name)
         m_PatientName = name;
         emit sigPatientNameChanged();
     }
+}
+
+int PatientDataObject::foot() const
+{
+    return m_Foot;
+}
+
+void PatientDataObject::setFoot(int foot)
+{
+    m_Foot = foot;
 }
 

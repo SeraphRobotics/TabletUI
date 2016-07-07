@@ -1,68 +1,53 @@
 // View3d.qml
 
 import QtQuick 2.0
-import Qt3D 2.0
-import Qt3D.Shapes 2.0
-import Helpers 1.0
+import QtCanvas3D 1.0
 
+import "../../RegularScreens/SettingsPagePrivateComponents/" 1.0
+
+import "scene.js" as Scene
 
 // 3dView Item - Viewer for stl files.
-// The most important limation here is that width/height ratio should always be 0.533,
-// otherwise there are some weird problems with scaling
 
-Viewport {
-    id: view3d
+Canvas3D {
+    property string meshSource
+    property string footSide // leftSide/rightSide
 
-    property alias meshColor: meshColorEffect.color
-    property alias meshSource:  mesh.source
-    property alias cameraNP: cam.nearPlane
-    property int distance: 6
-    property int k: 51 // scale factor
-    property int timeParametr : 61
+    signal componentInitialized()
 
-    navigation : false
+    function setStlFile(source) {
+        var foot
+        if (footSide == "leftSide")
+            foot = qmlCppWrapper.leftFoot
+        else if (footSide == "rightSide")
+            foot = qmlCppWrapper.rightFoot
 
-    camera: Camera {
-        id: cam
-
-        projectionType: Camera.Orthographic
-        eye: Qt.vector3d(0, 0, distance)
+        Scene.setNewStlFile(view1,
+                            source,
+                            foot.scanWidth(),
+                            foot.scanHeight())
     }
 
-    Q3DHelper {
-        id: q3dhelper
+    id: view1
+    // need to be able set transparent background
+    opacity: 0.99
+
+    onInitializeGL: {
+        var foot
+        if (footSide == "leftSide")
+            foot = qmlCppWrapper.leftFoot
+        else if (footSide == "rightSide")
+            foot = qmlCppWrapper.rightFoot
+
+        Scene.initializeGL(view1,
+                           meshSource,
+                           foot.scanWidth(),
+                           foot.scanHeight())
     }
+    onPaintGL: Scene.paintGL(view1)
+    onResizeGL: Scene.resizeGL(view1)
 
-    Mesh {
-        id: mesh
-        dumpInfo: true
-        options: "ForceSmooth"
-        onLoaded: {
-            item.effect = meshColorEffect
-
-            q3dhelper.setNode(mesh)
-
-            cam.center = q3dhelper.boundingBoxCenter().times(1/timeParametr)
-            cam.eye = cam.center
-            cam.eye.z = distance
-        }
-    }
-
-    Item3D {
-        id: item
-
-        mesh: mesh
-        position: Qt.vector3d(0, 0, 0)
-        scale: 1 / k
-    }
-
-    Effect {
-        id: meshColorEffect
-    }
-
-    onTimeParametrChanged: {
-        cam.center = q3dhelper.boundingBoxCenter().times(1/timeParametr)
-        cam.eye = cam.center
-        cam.eye.z = distance
+    onComponentInitialized: {
+        SettingsPageComponentsSettings.m_MainRootObject.canvasInitialized()
     }
 }

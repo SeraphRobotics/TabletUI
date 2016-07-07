@@ -37,13 +37,13 @@ QtObject {
     property real topcoatThicknessRight: 6
     property real topcoatWeaveLeft: 1
     property real topcoatWeaveRight: 1
+    property real topcoatStyleLeft: 1
+    property real topcoatStyleRight: 1
 
     property real canvasPaintPenWidth: 10
 
-    //Value used to store paths in Main3dView.qml (main3dView state).
-    property string m_StlFilePath0: "qrc:/exampleImages/right.stl"
-    property string m_StlFilePath1: ""
-
+    property size leftCanvasSize
+    property size rightCanvasSize
 
     // Value used to grab all pad images.
     // Used for detecting borders while saving pad properties into xml file.
@@ -57,6 +57,7 @@ QtObject {
 
 
     signal resetSliderValue()
+    signal modificationsWereAdded()
 
     // Value used to set basic size and position for all created pads.
     property variant setRecreateItemAsSelect: Timer {
@@ -77,6 +78,7 @@ QtObject {
             }
             currentDraggablePad.opacity = 1
             drawingAreaDetection._reset()
+            currentDraggablePad.resizeImageFrameToImage()
             currentDraggablePad.setCurrentPadBasicValues(rootObject)
 
         }
@@ -265,7 +267,7 @@ QtObject {
         }
     }
 
-    function setTopcoatThickness(value, applyToBoth, weaveValue)
+    function setTopcoatThickness(value, applyToBoth, weaveValue, style)
     {
         if(settingsPageManager.currentSelectedDirection === "left"
                 || settingsPageManager.currentSelectedDirection === "both"
@@ -274,6 +276,7 @@ QtObject {
             console.log("Set left"+value)
             topcoatThicknessLeft = value
             topcoatWeaveLeft = weaveValue
+            topcoatStyleLeft = style
         }
         if(settingsPageManager.currentSelectedDirection === "right"
                 || settingsPageManager.currentSelectedDirection === "both"
@@ -282,6 +285,7 @@ QtObject {
             console.log("Set right"+value)
             topcoatThicknessRight = value
             topcoatWeaveRight = weaveValue
+            topcoatStyleRight = style
         }
     }
 
@@ -309,14 +313,22 @@ QtObject {
         /// next elements application catching in respective onElementSavedChanged
         /// place.
         console.log("Grab Image result: "+elementImage.grabToImage(function(result) {
-            qmlCppWrapper.appendElementToShellList(element.direction,
-                                                   element.m_Name,
-                                                   element.m_Depth,
-                                                   element.m_Height,
-                                                   element.m_Stiffness,
-                                                   result.image,
-                                                   element.realX,
-                                                   element.realY)
+            var foot
+            if (element.direction === "left")
+                foot = qmlCppWrapper.leftFoot
+            else if (element.direction === "right")
+                foot = qmlCppWrapper.rightFoot
+
+            foot.addModification(element.m_Type,
+                                 element.m_Depth,
+                                 element.m_Height,
+                                 element.m_Stiffness,
+                                 result.image,
+                                 element.realX,
+                                 element.realY,
+                                 element.direction === "left"
+                                 ? leftCanvasSize
+                                 : rightCanvasSize)
             rootObject.elementSaved++
         }));
 
@@ -395,9 +407,6 @@ QtObject {
         var middleY = 0
         var maxPos = m_RightSideComponent.height - 50
 
-
-        console.log()
-
         //Sort pads by y position in ascending order.
         draggableObjectArray.sort(
                     function sortArrayViaYPos(first, second)
@@ -428,7 +437,6 @@ QtObject {
                                               m_LeftSideComponent.y).x/textElementWithMarginsWidth)-0.25)
 
             console.log("Column count "+maxColumn)
-
 
             // Calculate middle area width.
             var centerAreaWidth = (m_RightSideComponent.x -
@@ -564,19 +572,16 @@ QtObject {
         }
     }
 
-    function saveValues(stiffnes,mmValues, leftX, rightX,
-                        depthValue)
+    function saveValues(stiffnes,mmValues, depthValue)
     {
-        console.log("Save Values "+leftX+" right "+rightX+" depth "+depthValue+" height "+
+        console.log("Save Values "+" depth "+depthValue+" height "+
                     (parseInt(mmValues)-depthValue))
         currentDraggablePad.m_Stiffness = stiffnes
         currentDraggablePad.m_Height = parseInt(mmValues)-depthValue
-        currentDraggablePad.m_HeightDepthXL = leftX
-        currentDraggablePad.m_HeightDepthXR = rightX
         currentDraggablePad.m_Depth = depthValue
     }
 
-    function createObject(svgItem, typeName, createBy, width, height, x, y, basicRotation)
+    function createObject(svgItem, typeName, type, createBy, width, height, x, y, basicRotation)
     {
         currentDraggablePad = null
         var selectedArea = settingsPageManager.currentSelectedDirection
@@ -584,32 +589,38 @@ QtObject {
         if(selectedArea == "both" &&
                 createBy.toString() === "oneClicked")
         {
-            _allocateObject(svgItem, "both", typeName, createBy, width, height, x, y ,basicRotation);
+            _allocateObject(svgItem, "both", typeName, type, createBy, width, height, x, y ,basicRotation);
             return;
         }
 
         if(createBy === "recreate")
         {
-            _allocateObject(svgItem, recreateAttributes.side, typeName, createBy, width, height, x, y, basicRotation);
+            _allocateObject(svgItem, recreateAttributes.side, typeName, type, createBy, width, height, x, y, basicRotation);
+            return
+        }
+
+        if(createBy === "restore")
+        {
+            _allocateObject(svgItem, selectedArea, typeName, type, createBy, width, height, x, y, basicRotation);
             return
         }
 
         if(selectedArea == "right")
         {
-            _allocateObject(svgItem, "right", typeName, createBy, width, height, x, y, basicRotation)
+            _allocateObject(svgItem, "right", typeName, type, createBy, width, height, x, y, basicRotation)
         }
 
         if(selectedArea == "left")
         {
-            _allocateObject(svgItem, "left", typeName, createBy, width, height, x, y, basicRotation);
+            _allocateObject(svgItem, "left", typeName, type, createBy, width, height, x, y, basicRotation);
         }
 
         if(selectedArea == "both")
         {
             m_CurrentSelectedArea = m_RightSideComponent
-            _allocateObject(svgItem, "right", typeName, createBy, width, height, x, y, basicRotation)
+            _allocateObject(svgItem, "right", typeName, type, createBy, width, height, x, y, basicRotation)
             m_CurrentSelectedArea = m_LeftSideComponent
-            _allocateObject(svgItem, "left", typeName, createBy, width, height, x, y, basicRotation)
+            _allocateObject(svgItem, "left", typeName, type, createBy, width, height, x, y, basicRotation)
         }
     }
 
@@ -622,10 +633,13 @@ QtObject {
         {
             var imgPath = element.source
             var typeName = element.m_Name
+            var type = element.m_Type
             var elementHeight = element.height
             var elementWidth = element.width
             var elementX = element.x
             var elementY = element.y
+            var outerLoop = element.m_OuterLoop;
+            var innerLoops = element. m_InnerLoops;
 
             if( element._privateElement._checkIfDropInside(m_LeftSideComponent))
             {
@@ -643,12 +657,12 @@ QtObject {
             }
 
             recreateAttributes.xValue = parentItem.mapToItem
-                    (m_CurrentSelectedArea.view3d,
+                    (m_CurrentSelectedArea.view3dRect,
                      mouseX,
                      mouseY).x
 
             recreateAttributes.yValue = parentItem.mapToItem
-                    (m_CurrentSelectedArea.view3d,
+                    (m_CurrentSelectedArea.view3dRect,
                      mouseX,
                      mouseY).y
 
@@ -658,18 +672,19 @@ QtObject {
             element =  null
             createObject(imgPath,
                          typeName,
+                         type,
                          "recreate")
         }
     }
 
-    function _allocateObject(svgItem, side, typeName, createBy, width, height, x, y, basicRotation)
+    function _allocateObject(svgItem, side, typeName, type, createBy, width, height, x, y, basicRotation)
     {
         var newObject = Qt.
         createComponent("SettingsPageComponents/DraggableElementComponents/DraggableElement.qml")
 
         if (newObject.status === Component.Ready)
         {
-            var parentElement = m_CurrentSelectedArea.view3d
+            var parentElement = m_CurrentSelectedArea.view3dRect
 
             if(side === "both")
                 parentElement = m_MainRootObject
@@ -677,6 +692,8 @@ QtObject {
             var draggableElement = newObject.createObject(parentElement);
             draggableElement.source = svgItem;
             draggableElement.m_Name = typeName
+            draggableElement.m_Type = type;
+
             draggableElement.direction = side
 
             if(typeof (width) !== "undefined"  && typeof (height) !== "undefined")
@@ -685,7 +702,12 @@ QtObject {
                 draggableElement.exampleImage.height = height
             }
 
-            if(createBy === "recreate")
+            if(createBy === "restore")
+            {
+                draggableElement.x = x
+                draggableElement.y = y
+            }
+            else if(createBy === "recreate")
             {
                 console.log("Recreate x "+recreateAttributes.xValue
                             +"Recreate y "+ recreateAttributes.yValue)
@@ -694,7 +716,6 @@ QtObject {
                     draggableElement.x = x
                     draggableElement.y = y
                 }
-
                 else
                 {
                     draggableElement.x = recreateAttributes.xValue
@@ -723,6 +744,10 @@ QtObject {
 
             element = draggableElement
             draggableObjectArray.push(element)
+            if (side === "left")
+                leftCanvasSize = m_LeftSideComponent.getView3dSize()
+            else if (side === "right")
+                rightCanvasSize = m_RightSideComponent.getView3dSize()
         }
     }
 
@@ -731,13 +756,13 @@ QtObject {
     {
         // Ignore first value becauase it was already grabbed into detectBordersAndSaveToXml()
         if(elementSaved === 0)
-        return;
+            return;
 
         // All images grabbed, leave the function.
         if(elementSaved === draggableObjectArray.length)
         {
             console.log("Saved all borders, save result to xml files.")
-            qmlCppWrapper.saveShellModifications()
+            modificationsWereAdded()
             return;
         }
 
@@ -750,14 +775,22 @@ QtObject {
             var imageWidth = elementImage.width
 
             console.log("Grab Image result: "+elementImage.grabToImage(function(result) {
-                qmlCppWrapper.appendElementToShellList(element.direction,
-                                                       element.m_Name,
-                                                       element.m_Depth,
-                                                       element.m_Height,
-                                                       element.m_Stiffness,
-                                                       result.image,
-                                                       element.realX,
-                                                       element.realY)
+                var foot
+                if (element.direction === "left")
+                    foot = qmlCppWrapper.leftFoot
+                else if (element.direction === "right")
+                    foot = qmlCppWrapper.rightFoot
+
+                foot.addModification(element.m_Type,
+                                     element.m_Depth,
+                                     element.m_Height,
+                                     element.m_Stiffness,
+                                     result.image,
+                                     element.realX,
+                                     element.realY,
+                                     element.direction === "left"
+                                     ? leftCanvasSize
+                                     : rightCanvasSize)
                 rootObject.elementSaved++
             }));
         }
@@ -767,8 +800,7 @@ QtObject {
         }
     }
 
-    Component.onDestruction:
-    {
+    function removeAllPads() {
         console.log("Destroy draggable array component.
                      Clear draggable elements array,array length: "
                     +draggableObjectArray.length)
@@ -777,5 +809,10 @@ QtObject {
         {
             draggableObjectArray[i].destroy()
         }
+    }
+
+    Component.onDestruction:
+    {
+        removeAllPads()
     }
 }

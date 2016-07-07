@@ -3,11 +3,6 @@
 
 #include <QObject>
 
-/**
- * @brief The NameObject class
- * Class used to store doctor's full name with title.
- * NameObject = title+firstName+lastName
- */
 class NameObject : public QObject
 {
     Q_OBJECT
@@ -20,11 +15,10 @@ class NameObject : public QObject
                NOTIFY sigTitleChanged)
 
 public:
-    explicit NameObject(const QString &firstName = QString::null,
-                        const QString &lastName = QString::null,
-                        const QString &title = QString::null,
+    explicit NameObject(const QString &firstName = QString(),
+                        const QString &lastName = QString(),
+                        const QString &title = QString(),
                         QObject *parent = 0);
-
 
     QString firstName() const;
     QString lastName() const;

@@ -218,7 +218,7 @@ Item {
     GrayDescriptionText {
         font.pixelSize : 11
 
-        text: "within shell"
+        text: qsTr("within shell")
 
         anchors {
             left : mainLine.left
@@ -229,7 +229,7 @@ Item {
     GrayDescriptionText {
         font.pixelSize : 11
 
-        text: "above shell"
+        text: qsTr("above shell")
 
         anchors {
             right : mainLine.right
@@ -289,4 +289,11 @@ Item {
         value = depthValue+heightValue
     }
 
+    function getHeightDepthXL(depth) {
+        return hashLine.x - (depth + 0.5) * stepSize - leftTriangle.width/2;
+    }
+
+    function getHeightDepthXR(depth, height) {
+        return hashLine.x - (depth + 0.5) * stepSize + leftTriangle.width/2 + (height - 1) * stepSize;
+    }
 }

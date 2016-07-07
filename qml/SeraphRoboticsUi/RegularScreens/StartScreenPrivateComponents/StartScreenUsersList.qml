@@ -39,7 +39,7 @@ GroupBoxTemplate {
         font.pixelSize: 20
 
         color : "#999999"
-        text : "Prescriber Name"
+        text : qsTr("Prescriber Name")
     }
 
     ListView {
@@ -59,11 +59,10 @@ GroupBoxTemplate {
         highlight : highlight
         highlightFollowsCurrentItem: false
 
-        delegate: Rectangle {
+        delegate: Item {
             width : parent.width
             height : 30
 
-            color : "transparent"
             Text {
                 font.pixelSize: 17
 
